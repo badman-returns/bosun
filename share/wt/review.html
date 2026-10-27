@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>wt review</title>
+<!-- wt fills __META__, __SUB__ and __DIFF__. The diff stays in this local file. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/css/diff2html.min.css">
+<script src="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/js/diff2html-ui.min.js"></script>
+<style>
+  :root { --ink: #1e1e1e; --muted: #6b7280; --bg: #ffffff; --line: #e5e7eb; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; background: var(--bg);
+           border-bottom: 1px solid var(--line); padding: 12px 16px; }
+  h1 { margin: 0; font-size: 18px; font-weight: 600; }
+  h1 .vs { color: var(--muted); font-weight: 400; }
+  .sub { color: var(--muted); font-size: 13px; }
+  .bar { margin-top: 8px; }
+  .bar button { font: inherit; padding: 2px 10px; margin-right: 6px; cursor: pointer; }
+  main { padding: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>__META__</h1>
+  <div class="sub">__SUB__</div>
+  <div class="bar">
+    <button data-view="side-by-side">Side by side</button>
+    <button data-view="line-by-line">Line by line</button>
+  </div>
+</header>
+<main id="diff"></main>
+<script>
+  const diff = __DIFF__;
+  function show(view) {
+    const target = document.getElementById("diff");
+    if (!diff.trim()) { target.textContent = "No changes."; return; }
+    const ui = new Diff2HtmlUI(target, diff, {
+      outputFormat: view, drawFileList: true, matching: "lines",
+      fileListToggle: true, fileContentToggle: true, highlight: false,
+    });
+    ui.draw();
+  }
+  document.querySelectorAll("[data-view]").forEach(b =>
+    b.addEventListener("click", () => show(b.dataset.view)));
+  show("side-by-side");
+</script>
+</body>
+</html>

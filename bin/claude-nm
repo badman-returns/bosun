@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# claude-nm - the claude binary the no-mistakes pipeline runs (agent_path_override.claude).
+#
+# Spreads pipeline work across the Claude accounts in BOSUN_ACCOUNTS: a new session goes to
+# whichever account claude-acct says has the most room; a resumed or continued session stays on
+# the account that already holds it, because a session only exists inside one account's config dir.
+# Any doubt falls back to the account the daemon was started with, else the first account.
+# One line per call is logged to ~/.no-mistakes/logs/claude-account.log, tagged with
+# CLAUDE_POOL_TAG (an overnight loop can set it, for example to gnhf).
+#
+# CLAUDE_NM_REAL is the real claude binary; the default is ~/.local/bin/claude.
+REAL=${CLAUDE_NM_REAL:-$HOME/.local/bin/claude}
+LOG="$HOME/.no-mistakes/logs/claude-account.log"
+read -r -a ACCOUNTS <<<"${BOSUN_ACCOUNTS:-$HOME/.claude-account-a $HOME/.claude-account-b}"
+ACCT_BIN=$(command -v claude-acct || echo "$(dirname "$0")/claude-acct")
+
+sid="" cont=false prev=""
+for a in "$@"; do
+  case "$prev" in --resume|-r) sid=$a ;; esac
+  case "$a" in
+    --resume=*) sid=${a#--resume=} ;;
+    --continue|-c) cont=true ;;
+  esac
+  prev=$a
+done
+
+dir="" why=""
+if [ -n "$sid" ]; then
+  for acct in "${ACCOUNTS[@]}"; do
+    if compgen -G "$acct/projects/*/$sid.jsonl" >/dev/null; then dir=$acct; why=resume; break; fi
+  done
+elif $cont; then
+  # --continue picks the latest session for this folder, so use the account that has it
+  enc=$(pwd | sed 's/[^a-zA-Z0-9]/-/g') newest=0
+  for acct in "${ACCOUNTS[@]}"; do
+    for f in "$acct/projects/$enc"/*.jsonl; do
+      [ -f "$f" ] || continue
+      m=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0)
+      if [ "$m" -gt "$newest" ]; then newest=$m; dir=$acct; why=continue; fi
+    done
+  done
+fi
+if [ -z "$dir" ]; then
+  dir=$("$ACCT_BIN" pick 2>/dev/null) && why=${why:-pick}
+fi
+if [ ! -d "$dir" ]; then
+  dir=${CLAUDE_CONFIG_DIR:-${ACCOUNTS[0]}}; why=fallback
+fi
+
+printf '%s %s %s %s session=%s\n' "$(date '+%F %T')" "${CLAUDE_POOL_TAG:-no-mistakes}" "$(basename "$dir" | sed 's/^\.claude-//')" "$why" "${sid:-new}" >>"$LOG" 2>/dev/null
+export CLAUDE_CONFIG_DIR=$dir
+exec "$REAL" "$@"

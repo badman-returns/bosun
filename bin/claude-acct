@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# claude-acct - pick which Claude account (config dir) should take the next piece of work.
+#
+#   claude-acct pick      print the config dir with the most room (for CLAUDE_CONFIG_DIR)
+#   claude-acct status    show every account: 5-hour and 7-day use, how fresh the reading is
+#
+# The accounts are one pool; they exist only for billing. The reading comes from the status
+# line, which records each account's live rate limits in <config dir>/.quota-cache.json while
+# any session on that account is open. A reading older than 45 minutes counts as unknown.
+#
+# BOSUN_ACCOUNTS is the pool: a space-separated list of Claude config dirs.
+set -uo pipefail
+
+read -r -a ACCOUNTS <<<"${BOSUN_ACCOUNTS:-$HOME/.claude-account-a $HOME/.claude-account-b}"
+STALE=${CLAUDE_ACCT_STALE_SECS:-2700}
+UNKNOWN_GUESS=50      # an account nobody has used for a while has probably reset; treat it as half used
+WEEK_FULL=97          # a 7-day window at or above this is out of the running
+now=$(date +%s)
+
+# prints: five_hour_used seven_day_used age_seconds   (-1 for anything unknown)
+reading() {
+  local f="$1/.quota-cache.json"
+  if [ ! -f "$f" ]; then echo "-1 -1 -1"; return; fi
+  jq -r --argjson now "$now" '
+    [ (.rate_limits.five_hour.used_percentage // -1 | floor),
+      (.rate_limits.seven_day.used_percentage // -1 | floor),
+      ($now - (.at // 0)) ] | map(tostring) | join(" ")' "$f" 2>/dev/null || echo "-1 -1 -1"
+}
+
+pick() {
+  local best="" best_score=1000 fallback="" fallback_week=1000 dir u5 u7 age score
+  for dir in "${ACCOUNTS[@]}"; do
+    [ -d "$dir" ] || continue
+    read -r u5 u7 age <<<"$(reading "$dir")"
+    if [ "$age" -lt 0 ] || [ "$age" -gt "$STALE" ] || [ "$u5" -lt 0 ]; then
+      score=$UNKNOWN_GUESS; u7=-1
+    else
+      score=$u5
+    fi
+    # remember the least-used week in case every account is out of room
+    if [ "$u7" -lt "$fallback_week" ]; then fallback_week=$u7; fallback=$dir; fi
+    if [ "$u7" -ge "$WEEK_FULL" ]; then continue; fi
+    if [ "$score" -lt "$best_score" ]; then best_score=$score; best=$dir; fi
+  done
+  if [ -z "$best" ]; then
+    echo "claude-acct: every account is at its weekly limit; using the least used one" >&2
+    best=${fallback:-${ACCOUNTS[0]}}
+  fi
+  printf '%s\n' "$best"
+}
+
+status() {
+  local dir u5 u7 age fresh chosen
+  chosen=$(pick 2>/dev/null)
+  printf '%-12s %-9s %-9s %-14s %s\n' ACCOUNT 5-HOUR 7-DAY READING NEXT
+  for dir in "${ACCOUNTS[@]}"; do
+    [ -d "$dir" ] || continue
+    read -r u5 u7 age <<<"$(reading "$dir")"
+    if [ "$age" -lt 0 ]; then fresh="none yet"
+    elif [ "$age" -gt "$STALE" ]; then fresh="stale ($((age / 60))m)"
+    else fresh="$((age / 60))m ago"; fi
+    if [ "$u5" -lt 0 ]; then u5="?"; else u5="$u5%"; fi
+    if [ "$u7" -lt 0 ]; then u7="?"; else u7="$u7%"; fi
+    printf '%-12s %-9s %-9s %-14s %s\n' "$(basename "$dir" | sed 's/^\.claude-//')" "$u5" "$u7" "$fresh" "$([ "$dir" = "$chosen" ] && echo "<- next")"
+  done
+}
+
+case "${1:-status}" in
+  pick) pick ;;
+  status) status ;;
+  -h|--help|help) sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *) echo "usage: claude-acct pick|status" >&2; exit 2 ;;
+esac

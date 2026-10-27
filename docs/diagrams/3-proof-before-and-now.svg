@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2260" height="969" viewBox="20 0 2260 969" font-family="Inter, Segoe UI, system-ui, -apple-system, sans-serif">
+<rect x="20" y="0" width="2260" height="969" fill="#ffffff"/>
+<defs>
+<marker id="a1971c2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#1971c2"/></marker>
+<marker id="a2f9e44" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#2f9e44"/></marker>
+<marker id="a6741d9" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#6741d9"/></marker>
+</defs>
+<rect x="60" y="170" width="2180" height="260" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<rect x="90" y="240" width="330" height="140" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="640" y="240" width="360" height="140" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="1220" y="240" width="360" height="140" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="1.5"/>
+<rect x="1800" y="240" width="400" height="140" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="60" y="450" width="2180" height="54" rx="10" fill="#e7f5ff" stroke="#c2255c" stroke-width="1.5" stroke-dasharray="8 6"/>
+<rect x="60" y="590" width="2180" height="280" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<rect x="90" y="660" width="330" height="140" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="640" y="660" width="460" height="180" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="1.5"/>
+<rect x="1320" y="660" width="360" height="140" rx="10" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1.5"/>
+<rect x="1900" y="660" width="300" height="140" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="60" y="890" width="2180" height="39" rx="10" fill="#e7f5ff" stroke="#2f9e44" stroke-width="1.5" stroke-dasharray="8 6"/>
+<path d="M 424 300 L 636 300" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 1004 300 L 1216 300" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 1584 300 L 1796 300" fill="none" stroke="#1971c2" stroke-width="2" stroke-linejoin="round" marker-end="url(#a1971c2)"/>
+<path d="M 424 720 L 636 720" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 1104 720 L 1316 720" fill="none" stroke="#2f9e44" stroke-width="2" stroke-linejoin="round" marker-end="url(#a2f9e44)"/>
+<path d="M 1684 720 L 1896 720" fill="none" stroke="#1971c2" stroke-width="2" stroke-linejoin="round" marker-end="url(#a1971c2)"/>
+<text x="60" y="66.6" font-size="28" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="60" dy="0">Proof of done: before and now</tspan>
+</text>
+<text x="60" y="98.25" font-size="15" font-weight="600" fill="#868e96" xml:space="preserve">
+<tspan x="60" dy="0">Same goal, evidence you can open. The difference is who checks, and whether it can be skipped.</tspan>
+</text>
+<text x="82" y="205.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">BEFORE: JANUS</tspan>
+</text>
+<text x="112" y="275.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="112" dy="0">BUILDER</tspan>
+</text>
+<text x="112" y="302.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="112" dy="0">agent</tspan>
+</text>
+<text x="112" y="334.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="112" dy="0">writes code</tspan>
+<tspan x="112" dy="16.25">on a branch</tspan>
+</text>
+<text x="662" y="275.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="662" dy="0">VERIFIER</tspan>
+</text>
+<text x="662" y="302.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="662" dy="0">agent</tspan>
+</text>
+<text x="662" y="334.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="662" dy="0">runs tests, screenshots,</tspan>
+<tspan x="662" dy="16.25">writes proof/&lt;slice&gt;/</tspan>
+<tspan x="662" dy="16.25">into the repo</tspan>
+</text>
+<text x="1242" y="275.2" font-size="16" font-weight="600" fill="#f08c00" xml:space="preserve">
+<tspan x="1242" dy="0">CHECKLIST</tspan>
+</text>
+<text x="1242" y="302.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1242" dy="0">checklist.sh approve</tspan>
+</text>
+<text x="1242" y="334.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1242" dy="0">any agent could run</tspan>
+<tspan x="1242" dy="16.25">the approve command</tspan>
+</text>
+<text x="1822" y="275.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1822" dy="0">GATE 2: YOU</tspan>
+</text>
+<text x="1822" y="302.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1822" dy="0">in mission control</tspan>
+</text>
+<text x="1822" y="334.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1822" dy="0">look at the proof,</tspan>
+<tspan x="1822" dy="16.25">approve the slice, merge</tspan>
+</text>
+<text x="432" y="286.1" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="432" dy="0">3  hand over</tspan>
+</text>
+<text x="1012" y="286.1" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="1012" dy="0">3  tick items</tspan>
+</text>
+<text x="1592" y="286.1" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="1592" dy="0">2  asks you</tspan>
+</text>
+<text x="78" y="473.4" font-size="12" font-weight="400" fill="#c2255c" xml:space="preserve">
+<tspan x="78" dy="0">0  What went wrong: agents approved their own gates (about 100 times in one repo, once after touching 45 files against a limit of 4). The proof files lived in the repo (77 MB in one repo).</tspan>
+<tspan x="78" dy="15">   The rules were instructions the model could skip, and about half the sessions never loaded them.</tspan>
+</text>
+<text x="82" y="625.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">NOW: NO-MISTAKES</tspan>
+</text>
+<text x="112" y="695.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="112" dy="0">CREWMATE</tspan>
+</text>
+<text x="112" y="722.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="112" dy="0">agent</tspan>
+</text>
+<text x="112" y="754.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="112" dy="0">commits in its own</tspan>
+<tspan x="112" dy="16.25">treehouse worktree</tspan>
+</text>
+<text x="662" y="695.2" font-size="16" font-weight="600" fill="#f08c00" xml:space="preserve">
+<tspan x="662" dy="0">NO-MISTAKES</tspan>
+</text>
+<text x="662" y="722.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="662" dy="0">a git remote, so it cannot be skipped</tspan>
+</text>
+<text x="662" y="754.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="662" dy="0">fresh copy, rebase on the default branch</tspan>
+<tspan x="662" dy="16.25">review in a fresh context</tspan>
+<tspan x="662" dy="16.25">end-to-end test against your intent</tspan>
+<tspan x="662" dy="16.25">screenshots or recordings as evidence</tspan>
+<tspan x="662" dy="16.25">update docs, lint</tspan>
+</text>
+<text x="1342" y="695.2" font-size="16" font-weight="600" fill="#2f9e44" xml:space="preserve">
+<tspan x="1342" dy="0">PULL REQUEST</tspan>
+</text>
+<text x="1342" y="722.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1342" dy="0">on GitHub</tspan>
+</text>
+<text x="1342" y="754.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1342" dy="0">intent, what changed, risk,</tspan>
+<tspan x="1342" dy="16.25">and the screenshots or</tspan>
+<tspan x="1342" dy="16.25">recordings uploaded to it</tspan>
+</text>
+<text x="1922" y="695.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1922" dy="0">YOU</tspan>
+</text>
+<text x="1922" y="730.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1922" dy="0">read the risk;</tspan>
+<tspan x="1922" dy="16.25">open the diff only</tspan>
+<tspan x="1922" dy="16.25">if it is risky; merge</tspan>
+</text>
+<text x="432" y="689.85" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="432" dy="0">3  git push</tspan>
+<tspan x="432" dy="16.25">   no-mistakes</tspan>
+</text>
+<text x="1112" y="706.1" font-size="13" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="1112" dy="0">4  push, open PR</tspan>
+</text>
+<text x="1692" y="706.1" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="1692" dy="0">2  review</tspan>
+</text>
+<text x="78" y="913.4" font-size="12" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="78" dy="0">4  Why it holds: the only road to GitHub runs through the gate. Obvious problems get fixed automatically, product questions come to you, and the evidence lives in the PR (optionally on a separate evidence branch), never in your main history.</tspan>
+</text>
+</svg>

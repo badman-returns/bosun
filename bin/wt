@@ -1,0 +1,243 @@
+#!/usr/bin/env bash
+# wt: list the worktrees of a project and show the changes of one worktree
+# against the point where its branch left the base branch.
+# wt only reads the worktrees. It writes the diff, or a copy of the changed
+# files, to a temporary folder, so no viewer can change a crewmate's files.
+#
+# macOS first: it uses open, opendiff (FileMerge) and lsof.
+# WT_ROOTS is a colon-separated list of folders that hold git clones; each entry
+# can be a glob. The default is the firstmate homes (BOSUN_FM_HOME, BOSUN_FM_SESSIONS).
+# WT_TEMPLATE is the page template; the default is ~/.local/share/wt/review.html.
+set -euo pipefail
+
+# Do not let git refresh the index of a worktree that an agent uses.
+export GIT_OPTIONAL_LOCKS=0
+TMPDIR=${TMPDIR:-/tmp}
+
+FM_HOME_DIR=${BOSUN_FM_HOME:-$HOME/Documents/firstmate}
+FM_SESSIONS_DIR=${BOSUN_FM_SESSIONS:-$HOME/Documents/firstmate-sessions}
+WT_TEMPLATE=${WT_TEMPLATE:-$HOME/.local/share/wt/review.html}
+ROOTS=()
+IFS=: read -r -a root_patterns <<<"${WT_ROOTS:-$FM_HOME_DIR/projects:$FM_SESSIONS_DIR/*/projects}"
+for pattern in "${root_patterns[@]}"; do
+  # shellcheck disable=SC2206  # expand the glob on purpose
+  ROOTS+=($pattern)
+done
+
+usage() {
+  cat <<'EOF'
+Usage:
+  wt                     List the projects that have worktrees.
+  wt <project>           List the worktrees of <project> and ask which one to open.
+  wt <project> <n>       Open worktree <n> as a pull-request page in the browser.
+Options:
+  -f                     Open the diff in FileMerge instead of the browser.
+  -t                     Show the diff in the terminal (delta if installed) instead of the browser.
+  -b <ref>               Use <ref> as the base branch (default: origin/HEAD of the clone).
+EOF
+}
+
+home_label() {
+  case "$1" in
+    "$FM_HOME_DIR/"*) echo main ;;
+    "$FM_SESSIONS_DIR/"*)
+      local rest=${1#"$FM_SESSIONS_DIR/"}; echo "${rest%%/*}" ;;
+    *) echo other ;;
+  esac
+}
+
+# Print every git clone (not linked worktrees) under the roots, one per line.
+clones() {
+  local root dir
+  for root in "${ROOTS[@]}"; do
+    [ -d "$root" ] || continue
+    for dir in "$root"/*/; do
+      dir=${dir%/}
+      [ -d "$dir/.git" ] && echo "$dir"
+    done
+  done
+}
+
+base_ref() {
+  local clone=$1
+  if [ -n "$BASE_OVERRIDE" ]; then echo "$BASE_OVERRIDE"; return; fi
+  git -C "$clone" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null && return
+  local ref
+  for ref in origin/main origin/master; do
+    git -C "$clone" rev-parse --verify -q "$ref" >/dev/null && { echo "$ref"; return; }
+  done
+  echo HEAD
+}
+
+# Working folders of the running Claude and Codex processes.
+agent_cwds() {
+  local pid
+  for pid in $(pgrep -f 'claude|codex' 2>/dev/null); do
+    lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p'
+  done | sort -u
+}
+
+# Fill the ROWS array: "home|clone|path|branch" for each linked worktree of <project>.
+collect_rows() {
+  local project=$1 clone path branch line
+  ROWS=()
+  while IFS= read -r clone; do
+    [ "$(basename "$clone")" = "$project" ] || continue
+    path=""
+    while IFS= read -r line; do
+      case "$line" in
+        "worktree "*) path=${line#worktree } ; branch="(detached)" ;;
+        "branch "*) branch=${line#branch refs/heads/} ;;
+        "")
+          if [ -n "$path" ] && [ "$path" != "$clone" ]; then
+            ROWS+=("$(home_label "$clone")|$clone|$path|$branch")
+          fi
+          path="" ;;
+      esac
+    done < <(git -C "$clone" worktree list --porcelain; echo)
+  done < <(clones)
+}
+
+list_projects() {
+  local clone n
+  printf '%-10s %-24s %s\n' HOME PROJECT WORKTREES
+  while IFS= read -r clone; do
+    n=$(git -C "$clone" worktree list --porcelain | grep -c '^worktree ')
+    n=$((n - 1))
+    [ "$n" -gt 0 ] && printf '%-10s %-24s %s\n' "$(home_label "$clone")" "$(basename "$clone")" "$n"
+  done < <(clones)
+  return 0
+}
+
+print_rows() {
+  local cwds i=0 row home clone path branch base mb ahead files dirty agent
+  cwds=$(agent_cwds)
+  printf '%-3s %-9s %-34s %-20s %6s %6s %6s %-5s %s\n' N HOME BRANCH BASE COMMITS FILES DIRTY AGENT PATH
+  for row in "${ROWS[@]}"; do
+    i=$((i + 1))
+    IFS='|' read -r home clone path branch <<<"$row"
+    base=$(base_ref "$clone")
+    mb=$(git -C "$path" merge-base HEAD "$base" 2>/dev/null || echo "")
+    if [ -n "$mb" ]; then
+      ahead=$(git -C "$path" rev-list --count "$mb..HEAD")
+      files=$( { git -C "$path" diff --name-only "$mb"; git -C "$path" ls-files --others --exclude-standard; } | sort -u | grep -c . || true)
+    else
+      ahead="?"; files="?"
+    fi
+    dirty=$(git -C "$path" status --porcelain | grep -c . || true)
+    agent=no
+    if printf '%s\n' "$cwds" | grep -qxF "$path" || printf '%s\n' "$cwds" | grep -q "^$path/"; then agent=yes; fi
+    printf '%-3s %-9s %-34s %-20s %6s %6s %6s %-5s %s\n' "$i" "$home" "$branch" "$base" "$ahead" "$files" "$dirty" "$agent" "${path/#"$HOME"/\~}"
+  done
+}
+
+# Copy the base and current version of each changed file into a temporary folder.
+# Each copy gets a flat name ("src∕app∕page.tsx", with the division slash U+2215),
+# so FileMerge shows all changed files in one list and not as nested folders.
+snapshot() {
+  local path=$1 mb=$2 base=$3 branch=$4 tmp left right f flat
+  find "${TMPDIR%/}" -maxdepth 1 -name 'wt.*' -type d -mtime +1 -exec rm -rf {} + 2>/dev/null || true
+  tmp=$(mktemp -d "${TMPDIR%/}/wt.XXXXXX")
+  left="$tmp/$(echo "${base#origin/}@$(git -C "$path" rev-parse --short "$mb")" | tr '/' '-')"
+  right="$tmp/$(echo "$branch" | tr '/' '-')"
+  mkdir -p "$left" "$right"
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    flat=${f//\//∕}
+    if git -C "$path" cat-file -e "$mb:$f" 2>/dev/null; then
+      git -C "$path" show "$mb:$f" >"$left/$flat"
+    fi
+    if [ -f "$path/$f" ]; then
+      cp -P "$path/$f" "$right/$flat"
+    fi
+  done < <( { git -C "$path" diff --name-only "$mb"; git -C "$path" ls-files --others --exclude-standard; } | sort -u)
+  echo "$left|$right"
+}
+
+# Write the diff (with new untracked files) to an HTML page and open it in the browser.
+# The page template is WT_TEMPLATE. It loads the diff2html library from a public
+# CDN. The diff itself stays in the local file.
+web_view() {
+  local path=$1 mb=$2 base=$3 branch=$4 tmp diff f
+  find "${TMPDIR%/}" -maxdepth 1 -name 'wt.*' -type d -mtime +1 -exec rm -rf {} + 2>/dev/null || true
+  tmp=$(mktemp -d "${TMPDIR%/}/wt.XXXXXX")
+  diff="$tmp/changes.diff"
+  git -C "$path" diff --no-color --no-ext-diff "$mb" >"$diff"
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    (cd "$path" && git diff --no-color --no-ext-diff --no-index -- /dev/null "$f" >>"$diff") || true
+  done < <(git -C "$path" ls-files --others --exclude-standard)
+  WT_TITLE="$branch" WT_BASE="$base@$(git -C "$path" rev-parse --short "$mb")" \
+    WT_PATH="${path/#"$HOME"/\~}" WT_TEMPLATE="$WT_TEMPLATE" WT_DIRTY="$(git -C "$path" status --porcelain | grep -c . || true)" \
+    python3 -I - "$diff" "$tmp/review.html" <<'PY'
+import html, json, os, sys
+diff = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+title = os.environ["WT_TITLE"]
+meta = f'{html.escape(title)} <span class="vs">compared with</span> {html.escape(os.environ["WT_BASE"])}'
+sub = f'{html.escape(os.environ["WT_PATH"])} · uncommitted files: {os.environ["WT_DIRTY"]}'
+page = open(os.environ["WT_TEMPLATE"], encoding="utf-8").read()
+page = page.replace("__META__", meta).replace("__SUB__", sub).replace("__DIFF__", json.dumps(diff).replace("</", "<\\/"))
+open(sys.argv[2], "w", encoding="utf-8").write(page)
+PY
+  echo "$tmp/review.html"
+}
+
+open_row() {
+  local n=$1 row home clone path branch base mb pair page
+  if ! [[ "$n" =~ ^[0-9]+$ ]] || [ "$n" -lt 1 ] || [ "$n" -gt "${#ROWS[@]}" ]; then
+    echo "wt: no worktree number $n" >&2; exit 1
+  fi
+  row=${ROWS[$((n - 1))]}
+  IFS='|' read -r home clone path branch <<<"$row"
+  base=$(base_ref "$clone")
+  mb=$(git -C "$path" merge-base HEAD "$base")
+  if [ "$TERMINAL" = 1 ]; then
+    if command -v delta >/dev/null; then
+      git -C "$path" -c core.pager='delta --side-by-side --navigate' diff "$mb"
+    else
+      git -C "$path" diff "$mb"
+    fi
+    git -C "$path" ls-files --others --exclude-standard | sed 's/^/new file, not in git yet: /'
+    return
+  fi
+  if [ "$FILEMERGE" = 1 ]; then
+    pair=$(snapshot "$path" "$mb" "$base" "$branch")
+    echo "Opening $branch against $base in FileMerge. The files are a copy in $(dirname "${pair%%|*}")."
+    opendiff "${pair%%|*}" "${pair##*|}" >/dev/null 2>&1 &
+    return
+  fi
+  page=$(web_view "$path" "$mb" "$base" "$branch")
+  echo "Opening $branch against $base in the browser: $page"
+  [ -n "${WT_NO_OPEN:-}" ] || open "$page"
+}
+
+TERMINAL=0
+FILEMERGE=0
+BASE_OVERRIDE=""
+while getopts ":tfb:h" opt; do
+  case "$opt" in
+    t) TERMINAL=1 ;;
+    f) FILEMERGE=1 ;;
+    b) BASE_OVERRIDE=$OPTARG ;;
+    h) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+if [ $# -eq 0 ]; then list_projects; exit 0; fi
+
+collect_rows "$1"
+if [ "${#ROWS[@]}" -eq 0 ]; then
+  echo "wt: no worktrees found for project '$1'. Run 'wt' to see the projects." >&2
+  exit 1
+fi
+
+if [ $# -ge 2 ]; then open_row "$2"; exit 0; fi
+
+print_rows
+if [ -t 0 ]; then
+  printf 'Open which number? (Enter to quit) '
+  read -r n
+  [ -n "$n" ] && open_row "$n"
+fi

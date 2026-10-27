@@ -1,0 +1,36 @@
+{
+  "rules": [
+    {
+      "when": "A trivial mechanical edit with no judgement: a rename, a typo, a formatting or lint-only fix, a version bump, a one-line CI or config value change, or copying text the ticket spells out exactly.",
+      "use": {
+        "harness": "claude",
+        "model": "sonnet",
+        "effort": "low"
+      },
+      "why": "Workers that only execute run on Sonnet 5.5. Low effort is enough for an edit with no judgement. A one-line CI change cost $3.11 on Opus."
+    },
+    {
+      "when": "Simple, fully specified work: a small UI or copy change, a test for behaviour that already exists, documentation, a small bug whose cause is already known, or a change the ticket describes step by step.",
+      "use": {
+        "harness": "claude",
+        "model": "sonnet",
+        "effort": "medium"
+      },
+      "why": "Clear scope and low ambiguity; Sonnet does this well at a fraction of Opus."
+    },
+    {
+      "when": "Needs real judgement: a product or design decision, architecture or a refactor across modules, auth, permissions or security, a database schema or data migration, money, clinical or legal logic, a bug whose cause is still unknown, or a retry after a failed review round.",
+      "use": {
+        "harness": "claude",
+        "model": "opus",
+        "effort": "high"
+      },
+      "why": "Firstmate gives Opus 5.5 only to a worker whose task needs judgement, because a wrong call there is expensive. Normal context window, never 1M."
+    }
+  ],
+  "default": {
+    "harness": "claude",
+    "model": "sonnet",
+    "effort": "high"
+  }
+}

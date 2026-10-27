@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# agent-poll-guard - Claude Code PreToolUse hook that stops an agent from polling in a loop.
+#
+# Why: one crewmate read notifications 1,341 times in an hour while waiting on no-mistakes,
+# re-reading its whole context each time (475M tokens). Waiting should cost nothing.
+# An earlier version keyed on the exact command text, so `axi status`, `axi status | tail` and
+# `sleep 240; axi status` were three different keys, and it never fired once in five days.
+# This version keys on the COMMAND CLASS, applies to every
+# session (fleet, gate and direct), and blocks a sleep/while/until loop around a status command
+# on the first call. Heredoc bodies are ignored, so a script that merely mentions a status
+# command in prose is not a poll.
+#
+# Classes and limits (calls per class per 10 minutes, per session):
+#   notif      ReadNotifications tool                                   4
+#   nm-status  `no-mistakes axi status` (any flags, any pipe)           4
+#   pr-checks  `gh pr checks` without --watch, `gh pr view` asking for
+#              check or merge state, `gh run list|view`                 4
+#   fm-status  bin/fm-crew-state.sh, bin/fm-peek.sh (first mate)       8
+#   loop       a status command with sleep/while/until/for/watch in
+#              command position in the same call                       0 (always blocked)
+# The blocking forms (`no-mistakes axi run`, `gh pr checks --watch`, `gh run watch`) always pass.
+# Blocks with exit 2 and tells the agent the one blocking command to use instead.
+input=$(cat)
+tool=$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)
+cls="" limit=0
+# a word at command position: start of text/line, after ; & | ( { $( or after do/then
+cp='(^|[;&|({]|[$]\(|[[:space:]](do|then))[[:space:]]*'
+case "$tool" in
+  ReadNotifications) cls=notif limit=4 ;;
+  Bash)
+    cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)
+    # drop heredoc bodies (<<TAG ... TAG, quoted or not, optional dash) so prose is not a command
+    code=$(printf '%s\n' "$cmd" | awk '
+      skip { if ($0 == term || $0 ~ ("^[[:space:]]*" term "$")) skip=0; next }
+      { print }
+      match($0, /<<-?[[:space:]]*["'"'"']?[A-Za-z_][A-Za-z_0-9]*/) {
+        term=substr($0, RSTART, RLENGTH); sub(/<<-?[[:space:]]*["'"'"']?/, "", term); skip=1 } ')
+    has() { printf '%s' "$code" | grep -Eq "$cp$1"; }
+    if has 'no-mistakes axi run'; then exit 0; fi
+    if has 'gh pr checks' && printf '%s' "$code" | grep -q -- '--watch'; then exit 0; fi
+    if has 'gh run watch'; then exit 0; fi
+    if has 'no-mistakes axi status'; then cls=nm-status limit=4
+    elif has 'gh pr checks' || has 'gh run (list|view)'; then cls=pr-checks limit=4
+    elif has 'gh pr view' && printf '%s' "$code" | grep -Eq 'statusCheckRollup|mergeStateStatus|mergeable'; then cls=pr-checks limit=4
+    elif printf '%s' "$code" | grep -Eq 'fm-(crew-state|peek)\.sh'; then cls=fm-status limit=8
+    fi
+    [ -n "$cls" ] || exit 0
+    if has '(sleep|while|until|for|watch)[[:space:]]'; then cls=loop limit=0; fi ;;
+  *) exit 0 ;;
+esac
+
+window=600
+sid=$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null | tr -cd 'a-zA-Z0-9-')
+dir="${TMPDIR:-/tmp}/agent-poll-guard"
+mkdir -p "$dir" 2>/dev/null || exit 0
+log="$dir/${sid:-unknown}.log"
+now=$(date +%s)
+printf '%s %s\n' "$now" "$cls" >>"$log"
+if [ "$(wc -l <"$log")" -gt 400 ]; then
+  awk -v now="$now" -v w="$window" '$1 >= now - w' "$log" >"$log.tmp" && mv -f "$log.tmp" "$log"
+fi
+n=$(awk -v now="$now" -v w="$window" -v k="$cls" '$1 >= now - w && $2 == k' "$log" | wc -l | tr -d ' ')
+if [ "$cls" = loop ] || [ "$n" -gt "$limit" ]; then
+  if [ "$cls" = loop ]; then
+    reason="This command loops on a status check, and every iteration re-reads your whole context."
+  else
+    reason="This kind of check ($cls) has run $n times in the last 10 minutes, and every check re-reads your whole context."
+  fi
+  cat >&2 <<EOF
+Polling guard: $reason Stop polling.
+- Waiting on no-mistakes: run \`no-mistakes axi run\` once. It blocks until the next decision or the outcome.
+- Waiting on CI: \`gh pr checks <pr> --watch\` blocks until the checks finish.
+- Waiting on anything else: end your turn now. The firstmate watcher or the background task will wake you.
+EOF
+  exit 2
+fi
+exit 0

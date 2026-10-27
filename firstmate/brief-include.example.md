@@ -1,0 +1,8 @@
+Standing rules from the captain for every crewmate and scout. Every turn you take re-reads your whole context, so turns spent waiting are the most expensive thing you can do.
+
+- Wait without taking turns. Hand your branch to the pipeline with one `no-mistakes axi run`: it blocks until the next decision or the outcome. Wait on CI with `gh pr checks <pr> --watch`. Never poll `no-mistakes axi status`, `gh pr checks` or notifications in a loop, and never build a Monitor loop to watch them. If nothing can block, end your turn; the watcher wakes you. A hook blocks repeated polls.
+- Keep your context small. Read the parts of files you need, filter long command output with `tail`, `head` or `grep`, and do not paste whole logs back into the conversation.
+- Review is capped at two rounds. If no-mistakes opens a third review round, stop, do not patch again, and report the open findings to the first mate.
+- Do not start subagents, workflows or other agents yourself: a hook blocks the Agent, Task and Workflow tools in every crew copy. If the work needs parallel help, say so in your report and let the first mate decide.
+- Bug fixes: load the `diagnosing-bugs` skill before touching code and reproduce the bug first (the running page, or a failing test). New behaviour: load the `tdd` skill and write the failing test before the implementation. Both are in ~/.agents/skills.
+- Evidence words: "verified" means you opened the page or ran the test and saw it. If you could not (no login, no browser, no data), write "untested" in the PR body and say why. Never write verified for something you did not see.

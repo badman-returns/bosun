@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2580" height="937" viewBox="20 0 2580 937" font-family="Inter, Segoe UI, system-ui, -apple-system, sans-serif">
+<rect x="20" y="0" width="2580" height="937" fill="#ffffff"/>
+<defs>
+<marker id="a1971c2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#1971c2"/></marker>
+<marker id="a495057" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#495057"/></marker>
+<marker id="a6741d9" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#6741d9"/></marker>
+</defs>
+<rect x="60" y="180" width="360" height="380" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<rect x="640" y="180" width="380" height="230" rx="10" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1.5"/>
+<rect x="1240" y="150" width="720" height="580" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<rect x="1260" y="210" width="680" height="200" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="1260" y="430" width="680" height="180" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="2180" y="180" width="380" height="230" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="1240" y="750" width="720" height="54" rx="10" fill="#e7f5ff" stroke="#2f9e44" stroke-width="1.5" stroke-dasharray="8 6"/>
+<rect x="60" y="600" width="1060" height="297" rx="10" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5"/>
+<path d="M 424 260 L 636 260" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 1024 330 L 1236 330" fill="none" stroke="#1971c2" stroke-width="2" stroke-linejoin="round" marker-end="url(#a1971c2)"/>
+<path d="M 2176 260 L 1964 260" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<text x="60" y="66.6" font-size="28" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="60" dy="0">Where knowledge lives</tspan>
+</text>
+<text x="60" y="98.25" font-size="15" font-weight="600" fill="#868e96" xml:space="preserve">
+<tspan x="60" dy="0">Nothing project-specific lives in a Claude account, so switching accounts changes nothing but the quota.</tspan>
+</text>
+<text x="82" y="215.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">CLAUDE ACCOUNTS</tspan>
+</text>
+<text x="82" y="250.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">account-a: work quota</tspan>
+<tspan x="82" dy="16.25">account-b: personal quota</tspan>
+<tspan x="82" dy="16.25">the default ~/.claude, codex</tspan>
+</text>
+<text x="82" y="323.1" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">Every one of them gets:</tspan>
+<tspan x="82" dy="16.25">- CLAUDE.md linked to the global file</tspan>
+<tspan x="82" dy="16.25">- the same plugins</tspan>
+<tspan x="82" dy="16.25">- the same shared skills</tspan>
+<tspan x="82" dy="16.25">- auto memory off</tspan>
+<tspan x="82" dy="16.25">&#160;</tspan>
+<tspan x="82" dy="16.25">Still per account: quota,</tspan>
+<tspan x="82" dy="16.25">claude.ai connectors,</tspan>
+<tspan x="82" dy="16.25">claude.ai synced skills.</tspan>
+</text>
+<text x="662" y="215.2" font-size="16" font-weight="600" fill="#2f9e44" xml:space="preserve">
+<tspan x="662" dy="0">~/.agents</tspan>
+</text>
+<text x="662" y="242.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="662" dy="0">global, loaded by every session</tspan>
+</text>
+<text x="662" y="274.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="662" dy="0">AGENTS.md: your preferences, 30 lines</tspan>
+<tspan x="662" dy="16.25">skills/: the shared skills</tspan>
+<tspan x="662" dy="16.25">&#160;</tspan>
+<tspan x="662" dy="16.25">how to talk to you, never commit</tspan>
+<tspan x="662" dy="16.25">or merge, done means evidence,</tspan>
+<tspan x="662" dy="16.25">git identity per GitHub org</tspan>
+</text>
+<text x="1262" y="185.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1262" dy="0">EACH REPO  (the same on every account)</tspan>
+</text>
+<text x="1282" y="245.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1282" dy="0">WORK REPOS</tspan>
+</text>
+<text x="1282" y="272.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1282" dy="0">~/code/work</tspan>
+</text>
+<text x="1282" y="304.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1282" dy="0">AGENTS.md: what spans the work repos</tspan>
+<tspan x="1282" dy="16.25">web-app/AGENTS.md: about 140 lines</tspan>
+<tspan x="1282" dy="16.25">web-app/.claude/skills: run-local-stack, e2e-testing, deploy</tspan>
+<tspan x="1282" dy="16.25">docs/: specs, contracts, decision log</tspan>
+</text>
+<text x="1282" y="465.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1282" dy="0">PERSONAL AND CLIENT REPOS</tspan>
+</text>
+<text x="1282" y="492.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1282" dy="0">~/code/personal</tspan>
+</text>
+<text x="1282" y="524.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1282" dy="0">api: about 150 lines, 3 skills</tspan>
+<tspan x="1282" dy="16.25">marketing-site: about 90 lines, 1 skill</tspan>
+<tspan x="1282" dy="16.25">mobile-app: about 130 lines, 5 skills</tspan>
+</text>
+<text x="1260" y="642.35" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="1260" dy="0">In every repo, CLAUDE.md is one line: @AGENTS.md</tspan>
+</text>
+<text x="1260" y="667.35" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="1260" dy="0">Skills load only when a task needs them.</tspan>
+</text>
+<text x="2202" y="215.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="2202" dy="0">FIRST MATES</tspan>
+</text>
+<text x="2202" y="242.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="2202" dy="0">one home per session</tspan>
+</text>
+<text x="2202" y="274.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="2202" dy="0">main: ~/Documents/firstmate (all)</tspan>
+<tspan x="2202" dy="16.25">named: firstmate-sessions/&lt;name&gt;,</tspan>
+<tspan x="2202" dy="16.25">  for example web-app, api ...</tspan>
+<tspan x="2202" dy="16.25">each: its own task list, state</tspan>
+<tspan x="2202" dy="16.25">and repo clones; one rules file</tspan>
+</text>
+<text x="432" y="246.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="432" dy="0">1  linked as CLAUDE.md</tspan>
+</text>
+<text x="1032" y="299.85" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="1032" dy="0">2  cd into a repo:</tspan>
+<tspan x="1032" dy="16.25">   its AGENTS.md loads</tspan>
+</text>
+<text x="1972" y="229.85" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="1972" dy="0">3  crew works in</tspan>
+<tspan x="1972" dy="16.25">   its clones</tspan>
+</text>
+<text x="1258" y="773.4" font-size="12" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="1258" dy="0">4  When you correct an agent, the lesson goes into that repo&#x27;s AGENTS.md.</tspan>
+<tspan x="1258" dy="15">   Commit it, and every account and every crewmate sees it next session.</tspan>
+</text>
+<text x="84" y="637.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">WHAT HAPPENS WHEN</tspan>
+</text>
+<text x="84" y="678.35" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="84" dy="0">1     ANY SESSION</tspan>
+</text>
+<text x="84" y="702.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">Whatever account you start, it loads the same global preferences file.</tspan>
+</text>
+<text x="84" y="738.6" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="84" dy="0">2     IN A REPO</tspan>
+</text>
+<text x="84" y="762.6" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">The repo&#x27;s AGENTS.md loads too; its skills load only when a task needs them.</tspan>
+</text>
+<text x="84" y="798.85" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="84" dy="0">3     FLEET</tspan>
+</text>
+<text x="84" y="822.85" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">Each first mate session keeps its own clones, task list and state; crew inherit its account.</tspan>
+</text>
+<text x="84" y="859.1" font-size="13" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="84" dy="0">4     LEARNING</tspan>
+</text>
+<text x="84" y="883.1" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">Corrections become lines in the repo&#x27;s AGENTS.md, committed like code.</tspan>
+</text>
+</svg>

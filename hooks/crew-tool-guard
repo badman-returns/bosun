@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# crew-tool-guard - Claude Code PreToolUse hook: a crewmate never starts sub-agents or workflows.
+#
+# Why: the crew brief says "do not start subagents, workflows or other agents yourself", and
+# crewmates did it anyway after the brief existed. Firstmate's own subagent guard only protects
+# the first mate's session. This hook makes the brief's sentence a wall for every session whose
+# working directory is a treehouse worktree (that is where crewmates and scouts run). Every other
+# session passes straight through, so direct sessions keep their Agent tool.
+#
+# BOSUN_CREW_ROOTS is a colon-separated list of folders where crew run; the default is ~/.treehouse.
+input=$(cat)
+cwd=$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)
+crew=false
+IFS=: read -r -a roots <<<"${BOSUN_CREW_ROOTS:-$HOME/.treehouse}"
+for root in "${roots[@]}"; do
+  case "$cwd" in "${root%/}"/*) crew=true ;; esac
+done
+$crew || exit 0
+tool=$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)
+case "$tool" in
+  Agent|Task|Workflow|TaskCreate|SendMessage) ;;
+  *) exit 0 ;;
+esac
+cat >&2 <<MSG
+Crew guard: crewmates do not start sub-agents, workflows or other agents ($tool). Do the work in this session, reading only the parts of files you need. If the task genuinely needs parallel help, say so in your report and let the first mate decide.
+MSG
+exit 2

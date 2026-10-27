@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2580" height="957" viewBox="20 0 2580 957" font-family="Inter, Segoe UI, system-ui, -apple-system, sans-serif">
+<rect x="20" y="0" width="2580" height="957" fill="#ffffff"/>
+<defs>
+<marker id="a1971c2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#1971c2"/></marker>
+<marker id="a2f9e44" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#2f9e44"/></marker>
+<marker id="a495057" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#495057"/></marker>
+<marker id="a6741d9" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#6741d9"/></marker>
+</defs>
+<rect x="60" y="190" width="280" height="200" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="560" y="190" width="330" height="200" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="1110" y="150" width="380" height="350" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<rect x="1130" y="205" width="340" height="76" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="1130" y="295" width="340" height="76" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="1130" y="385" width="340" height="76" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="1710" y="190" width="330" height="200" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="1.5"/>
+<rect x="2260" y="190" width="300" height="200" rx="10" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1.5"/>
+<rect x="60" y="650" width="560" height="69" rx="10" fill="#e7f5ff" stroke="#495057" stroke-width="1.5" stroke-dasharray="8 6"/>
+<rect x="60" y="790" width="560" height="54" rx="10" fill="#e7f5ff" stroke="#1971c2" stroke-width="1.5" stroke-dasharray="8 6"/>
+<rect x="1110" y="620" width="1100" height="297" rx="10" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5"/>
+<path d="M 344 250 L 556 250" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 344 320 L 556 320" fill="none" stroke="#1971c2" stroke-width="2" stroke-linejoin="round" marker-end="url(#a1971c2)"/>
+<path d="M 556 362 L 344 362" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 894 250 L 1106 250" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 1494 300 L 1706 300" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 2044 300 L 2256 300" fill="none" stroke="#2f9e44" stroke-width="2" stroke-linejoin="round" marker-end="url(#a2f9e44)"/>
+<path d="M 2410 394 L 2410 560 L 200 560 L 200 394" fill="none" stroke="#1971c2" stroke-width="2" stroke-linejoin="round" marker-end="url(#a1971c2)"/>
+<text x="60" y="66.6" font-size="28" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="60" dy="0">A day of work</tspan>
+</text>
+<text x="60" y="98.25" font-size="15" font-weight="600" fill="#868e96" xml:space="preserve">
+<tspan x="60" dy="0">You talk to one agent. It runs the crew, every change passes a gate, and you merge.</tspan>
+</text>
+<text x="82" y="225.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">YOU</tspan>
+</text>
+<text x="82" y="252.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="82" dy="0">the captain</tspan>
+</text>
+<text x="82" y="284.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">talk in plain words</tspan>
+<tspan x="82" dy="16.25">agree plans</tspan>
+<tspan x="82" dy="16.25">read evidence</tspan>
+<tspan x="82" dy="16.25">merge PRs</tspan>
+</text>
+<text x="582" y="225.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="582" dy="0">FIRST MATE</tspan>
+</text>
+<text x="582" y="252.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="582" dy="0">fm auto  /  fm account-a</tspan>
+</text>
+<text x="582" y="284.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="582" dy="0">the one agent you talk to</tspan>
+<tspan x="582" dy="16.25">splits work into tasks,</tspan>
+<tspan x="582" dy="16.25">starts the crew, watches it,</tspan>
+<tspan x="582" dy="16.25">asks you only real decisions</tspan>
+</text>
+<text x="1132" y="185.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1132" dy="0">CREW  (one herdr tab each)</tspan>
+</text>
+<text x="1152" y="240.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="1152" dy="0">web-app: fix a bug</tspan>
+</text>
+<text x="1152" y="330.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="1152" dy="0">api: build an admin page</tspan>
+</text>
+<text x="1152" y="420.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="1152" dy="0">marketing-site: find a slow page</tspan>
+</text>
+<text x="1130" y="477.4" font-size="12" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1130" dy="0">each in its own treehouse worktree</tspan>
+</text>
+<text x="1732" y="225.2" font-size="16" font-weight="600" fill="#f08c00" xml:space="preserve">
+<tspan x="1732" dy="0">NO-MISTAKES</tspan>
+</text>
+<text x="1732" y="252.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1732" dy="0">the gate before GitHub</tspan>
+</text>
+<text x="1732" y="284.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1732" dy="0">rebase on the default branch</tspan>
+<tspan x="1732" dy="16.25">review in a fresh context</tspan>
+<tspan x="1732" dy="16.25">end-to-end test vs intent</tspan>
+<tspan x="1732" dy="16.25">record evidence, lint</tspan>
+</text>
+<text x="2282" y="225.2" font-size="16" font-weight="600" fill="#2f9e44" xml:space="preserve">
+<tspan x="2282" dy="0">PULL REQUEST</tspan>
+</text>
+<text x="2282" y="252.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="2282" dy="0">on GitHub</tspan>
+</text>
+<text x="2282" y="284.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="2282" dy="0">what you asked for</tspan>
+<tspan x="2282" dy="16.25">what changed</tspan>
+<tspan x="2282" dy="16.25">risk level</tspan>
+<tspan x="2282" dy="16.25">screenshots / video</tspan>
+</text>
+<text x="352" y="236.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="352" dy="0">1  herdr, then fm auto</tspan>
+</text>
+<text x="352" y="306.1" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="352" dy="0">2  ask in plain words</tspan>
+</text>
+<text x="352" y="384.35" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="352" dy="0">3  report, ask decisions</tspan>
+</text>
+<text x="902" y="236.1" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="902" dy="0">3  one tab per task</tspan>
+</text>
+<text x="1502" y="286.1" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="1502" dy="0">3  git push no-mistakes</tspan>
+</text>
+<text x="2052" y="286.1" font-size="13" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="2052" dy="0">4  PR opened</tspan>
+</text>
+<text x="700" y="581.4" font-size="12" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="700" dy="0">2  you read the risk and the evidence, then merge (merging is always yours)</tspan>
+</text>
+<text x="78" y="673.4" font-size="12" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="78" dy="0">SESSIONS  fm account-a web-app starts a first mate focused on</tspan>
+<tspan x="78" dy="15">web-app, with its own task list. If an account hits its quota,</tspan>
+<tspan x="78" dy="15">start the same session on the other account.</tspan>
+</text>
+<text x="78" y="813.4" font-size="12" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="78" dy="0">PLANNING  say &quot;show me the options in lavish&quot; and the plan</tspan>
+<tspan x="78" dy="15">opens as an interactive page: annotate, click decisions.</tspan>
+</text>
+<text x="1134" y="657.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1134" dy="0">WHAT HAPPENS WHEN</tspan>
+</text>
+<text x="1134" y="698.35" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="1134" dy="0">1     START</tspan>
+</text>
+<text x="1134" y="722.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1134" dy="0">Open a terminal, run herdr, then fm auto (the account only decides which quota pays).</tspan>
+</text>
+<text x="1134" y="758.6" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="1134" dy="0">2     YOU</tspan>
+</text>
+<text x="1134" y="782.6" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1134" dy="0">Ask in plain words, agree the plan, and at the end read the PR&#x27;s risk and evidence and merge.</tspan>
+</text>
+<text x="1134" y="818.85" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="1134" dy="0">3     AGENTS</tspan>
+</text>
+<text x="1134" y="842.85" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1134" dy="0">The first mate opens one herdr tab per task, each crewmate works in its own worktree.</tspan>
+</text>
+<text x="1134" y="879.1" font-size="13" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="1134" dy="0">4     GATE</tspan>
+</text>
+<text x="1134" y="903.1" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1134" dy="0">Every change passes no-mistakes before it reaches GitHub, then the PR opens with evidence.</tspan>
+</text>
+</svg>

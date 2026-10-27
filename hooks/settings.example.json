@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "ReadNotifications|Bash",
+        "hooks": [
+          { "type": "command", "command": "/path/to/bosun/hooks/agent-poll-guard" }
+        ]
+      },
+      {
+        "matcher": "Agent|Task|Workflow|TaskCreate|SendMessage",
+        "hooks": [
+          { "type": "command", "command": "/path/to/bosun/hooks/crew-tool-guard" }
+        ]
+      }
+    ]
+  }
+}

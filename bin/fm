@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+# fm <account|auto> [session] [--sonnet]  - start a first mate on that Claude account (run it inside herdr).
+#
+#   fm auto web         the account with the most room right now (claude-acct pick decides)
+#   fm acct             every account's 5-hour and 7-day use (claude-acct status)
+#   fm account-b        the main first mate: $BOSUN_FM_HOME, all projects
+#   fm account-a web    a first mate focused on the projects whose name matches "web" (web-app)
+#   fm account-a biling ... doubled letters do not matter: "biling" matches billing-api
+#   fm account-b second a name that matches no project gets all projects
+#   fm ls [project]     list sessions (optionally only those covering a project)
+#
+# Accounts: BOSUN_ACCOUNTS is a space-separated list of Claude config dirs. The account name is the
+# folder name without ".claude-", so ~/.claude-account-a is "account-a".
+# BOSUN_FM_HOME is the firstmate checkout (the main home); BOSUN_FM_SESSIONS holds the other homes.
+#
+# Two first mates cannot share one home (the second would be read-only), so each session name gets
+# its own home under $BOSUN_FM_SESSIONS/<name>, created on first use. A focused session takes over
+# the main task list's queued items for its projects, so each project is tracked in one place.
+# The account only decides whose quota pays; the same name always brings back the same session,
+# on any account.
+#
+# The first mate runs on Opus with the normal context window. It plans, checks and advises.
+# Crew get the model of each task from config/crew-dispatch.json: Sonnet for work that only
+# executes. The first mate can give one worker another model.
+# --sonnet starts the first mate on Sonnet. --opus is the default.
+# The window is always the normal one, never 1M.
+#
+# Context: set CLAUDE_CODE_DISABLE_1M_CONTEXT=1 in every account's settings.json, so no session
+# gets the 1M window. This launcher also sets a 160k compact window, so the first mate's context
+# stays smaller and cheaper. Crew get the same 200k cap from settings.
+#
+# Do not lower that window: Claude Code compacts about 33k tokens below it (reserved output plus a
+# buffer), and a first mate starts at about 78k before any work (AGENTS.md alone is about 31k).
+# A 120k window compacted at about 87k, leaving about 9k of working room. Ordinary tool output
+# refilled that within a turn or two, and sessions stopped with "Autocompact is thrashing".
+# 160k compacts at about 127k, leaving about 49k. Re-measure the baseline (the first turn's input
+# tokens in the session transcript) before you change it.
+#
+# Switching accounts mid-run: run `no-mistakes axi status` first; let active runs finish (the gate
+# spreads its own sessions across accounts through claude-nm, so the daemon never needs a restart);
+# quit this first mate; run `fm auto <session>`; then re-run bin/fm-pr-check.sh for each open PR,
+# so merge monitoring is armed again on the new session.
+set -euo pipefail
+
+FM_MODEL=${FM_MODEL:-opus}
+args=()
+for a in "$@"; do
+  case "$a" in
+    --opus) FM_MODEL=opus ;;
+    --sonnet) FM_MODEL=sonnet ;;
+    --model=*) FM_MODEL=${a#--model=} ;;
+    *) args+=("$a") ;;
+  esac
+done
+if [ ${#args[@]} -gt 0 ]; then set -- "${args[@]}"; else set --; fi   # bash 3.2-safe
+if [ "${1:-}" = acct ]; then exec claude-acct status; fi
+
+CODE="${BOSUN_FM_HOME:-$HOME/Documents/firstmate}"
+SESSIONS="${BOSUN_FM_SESSIONS:-$HOME/Documents/firstmate-sessions}"
+read -r -a ACCOUNTS <<<"${BOSUN_ACCOUNTS:-$HOME/.claude-account-a $HOME/.claude-account-b}"
+acct="${1:-}"
+name="${2:-main}"
+
+# squeeze doubled letters so "biling" matches "billing-api" and "web" matches "web-app"
+squeeze() { printf '%s' "$1" | tr -s 'a-z0-9-'; }
+
+# fm ls [project]  - every session, its projects, task counts, whether it is running now
+if [ "$acct" = ls ] || [ "$acct" = list ]; then
+  filter="${2:-}"
+  # a plain claude process has no FM_HOME; tolerate that instead of letting set -e end the script
+  running=$(for pid in $(pgrep -x claude 2>/dev/null || true); do ps -Ewwo command= -p "$pid" 2>/dev/null | grep -o 'FM_HOME=[^ ]*' || true; done | sed 's/FM_HOME=//')
+  printf '%-12s %-7s %-7s %-8s %-12s %s\n' SESSION FLIGHT QUEUED RUNNING LAST-USED PROJECTS
+  for home in "$CODE" "$SESSIONS"/*/; do
+    home="${home%/}"; [ -f "$home/data/projects.md" ] || continue
+    [ "$home" = "$CODE" ] && sname=main || sname=$(basename "$home")
+    projects=$(sed -n 's/^- \([a-z0-9-]*\) .*/\1/p' "$home/data/projects.md" | tr '\n' ' ')
+    if [ -n "$filter" ]; then case "$(squeeze "$projects")" in *"$(squeeze "$filter")"*) ;; *) continue ;; esac; fi
+    b="$home/data/backlog.md"; [ -f "$b" ] || b=/dev/null   # a new session has no task list yet
+    flight=$(awk '/^## In flight/{f=1;next} /^## /{f=0} f&&/^- \[/' "$b" 2>/dev/null | wc -l | tr -d ' ')
+    queued=$(awk '/^## Queued/{f=1;next} /^## /{f=0} f&&/^- \[/' "$b" 2>/dev/null | wc -l | tr -d ' ')
+    grep -qx "$home" <<<"$running" && run=yes || run=no
+    last=$(stat -f '%Sm' -t '%m-%d %H:%M' "$(ls -td "$home/state" "$b" 2>/dev/null | head -1)" 2>/dev/null || echo -)
+    printf '%-12s %-7s %-7s %-8s %-12s %s\n' "$sname" "$flight" "$queued" "$run" "$last" "$projects"
+  done
+  exit 0
+fi
+
+if [ "$acct" = auto ]; then
+  acct=$(basename "$(claude-acct pick)" | sed 's/^\.claude-//')
+  echo "fm: auto picked the $acct account"
+fi
+acct_dir=""
+for d in "${ACCOUNTS[@]}"; do
+  [ "$(basename "$d" | sed 's/^\.claude-//')" = "$acct" ] && acct_dir=$d
+done
+if [ -z "$acct" ] || [ -z "$acct_dir" ]; then
+  names=$(for d in "${ACCOUNTS[@]}"; do basename "$d" | sed 's/^\.claude-//'; done | paste -sd'|' -)
+  echo "usage: fm ${names}|auto [session-name] [--sonnet]   |   fm ls [project]   |   fm acct"; exit 1
+fi
+case "$name" in
+  main) home="$CODE" ;;
+  ""|*[!a-z0-9-]*) echo "session name: lowercase letters, digits and dashes"; exit 1 ;;
+  *) home="$SESSIONS/$name" ;;
+esac
+
+
+if [ ! -f "$home/data/projects.md" ]; then
+  # projects whose name matches the session name; none matching means all projects
+  focus=()
+  for p in "$CODE"/projects/*/; do
+    n=$(basename "$p")
+    case "$(squeeze "$n")" in *"$(squeeze "$name")"*) focus+=("$n") ;; esac
+  done
+  if [ ${#focus[@]} -eq 0 ]; then
+    for p in "$CODE"/projects/*/; do focus+=("$(basename "$p")"); done
+    echo "Creating first mate session '$name' (all projects) in $home ..."
+  else
+    echo "Creating first mate session '$name' focused on: ${focus[*]} ..."
+  fi
+
+  mkdir -p "$home/data" "$home/config" "$home/state" "$home/projects"
+  # this home's own rules; the fleet-wide ones arrive as data/captain-shared.md below
+  printf '# Captain preferences (%s home)\n\nFleet-wide rules are in data/captain-shared.md, a read-only copy of the main home'"'"'s file refreshed at each `fm` launch; do not edit it here. This file holds rules for this home'"'"'s own work only. None yet.\n' "$name" > "$home/data/captain.md"
+  ln -sfn "$CODE/config/crew-dispatch.json" "$home/config/crew-dispatch.json"   # one model-routing file too
+  ln -sfn "$CODE/config/brief-include.md" "$home/config/brief-include.md"     # and one set of crew brief rules
+  cp "$CODE/config/backend" "$home/config/backend"
+  { echo "# Projects"; echo; for n in "${focus[@]}"; do grep "^- $n " "$CODE/data/projects.md" || true; done; } > "$home/data/projects.md"
+
+  for n in "${focus[@]}"; do
+    src="$CODE/projects/$n"; dst="$home/projects/$n"
+    upstream=$(git -C "$src" remote get-url origin)
+    git clone -q "$src" "$dst"
+    git -C "$dst" remote set-url origin "$upstream"
+    git -C "$dst" config user.name "$(git -C "$src" config user.name)"
+    git -C "$dst" config user.email "$(git -C "$src" config user.email)"
+    if (cd "$dst" && git fetch -q origin && no-mistakes init >/dev/null 2>&1); then
+      echo "  $n ready"
+    else
+      echo "  $n cloned; ask the first mate to finish its setup"
+    fi
+  done
+
+  # a focused session takes over the main list's queued items for its projects
+  if [ ${#focus[@]} -lt "$(ls -d "$CODE"/projects/*/ | wc -l)" ] && [ -f "$CODE/data/backlog.md" ]; then
+    python3 - "$CODE/data/backlog.md" "$home/data/backlog.md" "${focus[@]}" <<'PY'
+# Moves Queued items only; in-flight items stay with the session that started them.
+import sys, re
+main_path, new_path, repos = sys.argv[1], sys.argv[2], set(sys.argv[3:])
+text = open(main_path).read()
+head, rest = text.split("## Queued\n", 1)
+queued, tail = rest.split("## Done", 1)
+blocks = re.split(r"(?m)^(?=- \[)", queued)
+keep, move = [], []
+for b in blocks:
+    m = re.search(r"\(repo: ([^)]+)\)", b.split("\n", 1)[0])
+    (move if m and m.group(1) in repos else keep).append(b)
+open(main_path, "w").write(head + "## Queued\n" + "".join(keep) + "## Done" + tail)
+open(new_path, "w").write("# Backlog\n\n## In flight\n## Queued\n" + "".join(move) + "## Done\n")
+print(f"  took over {len(move)} queued task(s) from the main list")
+PY
+  fi
+fi
+
+# fleet-wide captain rules: a read-only copy of the main home's file, refreshed every launch.
+# A copy, not a link: firstmate's memory-budget check refuses symlinked memory files.
+if [ "$home" != "$CODE" ] && [ -f "$CODE/data/captain-shared.md" ]; then
+  install -m 0444 "$CODE/data/captain-shared.md" "$home/data/captain-shared.md"
+fi
+
+cd "$CODE"
+export CLAUDE_CODE_DISABLE_1M_CONTEXT=1 CLAUDE_CODE_AUTO_COMPACT_WINDOW=160000
+# Mods: CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 turns on firstmate's Calm mod
+# (.claude/mods/firstmate-calm). Without it the mod does nothing. With it, each crew outcome shows
+# as a gray line in this chat that the model never reads, and /calm hides tool rows. Firstmate never
+# sets this flag itself; it is the captain's opt-in. Set here only, so only first mates get it.
+echo "fm: first mate '$name' on the $acct account, model $FM_MODEL (160k compact window, compacts near 127k)"
+FM_HOME="$home" CLAUDE_CONFIG_DIR="$acct_dir" CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 \
+  exec claude --model "$FM_MODEL" --effort high
