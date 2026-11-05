@@ -26,7 +26,10 @@ Install firstmate from its own repo. firstmate keeps its own licence. The licenc
 | `bin/claude-acct` | Picks the account with the most quota left, and shows the use of every account. |
 | `bin/claude-nm` | The `claude` binary for the no-mistakes gate. It puts each new gate session on the account with the most room. |
 | `bin/wt` | Lists the worktrees of a project and shows the changes of one worktree as a pull-request page. It only reads. |
-| `share/wt/review.html` | The page template that `wt` uses. |
+| `share/wt/review.html` | The page template that `wt` uses. It has a VS Code look, in light and dark. |
+| `bin/gn` | Starts a gnhf overnight loop with caps on iterations, tokens and the wait for a rate limit. It does not start when every account is near its weekly limit. |
+| `bin/bp` | Runs backpass in a repo on the account that owns that repo, so each account learns only from its own sessions. |
+| `gnhf/config.example.yml` | The gnhf config. It sends each loop step through `claude-nm` on Sonnet. |
 | `hooks/agent-poll-guard` | A PreToolUse hook. It stops an agent that polls a status command in a loop. |
 | `hooks/crew-tool-guard` | A PreToolUse hook. It stops a worker that tries to start sub-agents or workflows. |
 | `hooks/settings.example.json` | The hook wiring to merge into the `settings.json` of each account. |
@@ -45,6 +48,10 @@ home. If the name matches a project, the session works only on that project and 
 queued tasks of that project from the main task list. A name that matches no project gets all
 projects. The same name always brings back the same session, on any account. The account decides
 only which quota pays.
+
+`fm <account> <session> --subagents` lets that one first mate start harness sub-agents. Use it
+when the work is not on a registered project, for example a browser task with no git repo, because
+firstmate cannot make a worker worktree there. It sets `FM_ALLOW_SUBAGENT=1` for that session only.
 
 **A worktree per worker.** firstmate gives each worker its own worktree, so tasks that run at the
 same time never touch the same files. Workers build from what is on GitHub, not from your local
@@ -107,6 +114,10 @@ These steps are for macOS. Most scripts also work on Linux, but `wt` uses `open`
    | `CLAUDE_NM_REAL` | The real `claude` binary for `claude-nm`. | `~/.local/bin/claude` |
    | `CLAUDE_ACCT_STALE_SECS` | The age in seconds after which a quota reading counts as unknown. | `2700` |
    | `FM_MODEL` | The model of the first mate. `--sonnet` on `fm` also sets it. | `opus` |
+   | `FM_SUBAGENTS` | `1` lets the first mate start sub-agents. `--subagents` on `fm` also sets it. | `0` |
+   | `BP_ROOTS` | Folders that hold the clones for `bp <name>`, separated by colons. | the `projects` folder of `BOSUN_FM_HOME` |
+   | `BP_ACCOUNT_RULES` | Rules `<path prefix>=<config dir>` for `bp`, separated by spaces. The first match wins. | empty (the first account) |
+   | `GN_MAX_ITERATIONS`, `GN_MAX_TOKENS`, `GN_MAX_WAIT` | The caps that `gn` adds to a gnhf run. | `15`, `30000000`, `6h` |
 
    The status line shows "wrong git email" only when you set both `BOSUN_WORK_*` variables.
 
@@ -137,7 +148,9 @@ These steps are for macOS. Most scripts also work on Linux, but `wt` uses `open`
 
 8. In the no-mistakes config, set `agent_path_override.claude` to the path of `claude-nm`. The gate
    then spreads its sessions over the accounts.
-9. Open herdr and run `fm auto` (or `fm account-a`). Run `fm acct` to see the quota of every account.
+9. Optional: for overnight loops, install gnhf and copy `gnhf/config.example.yml` to
+   `~/.gnhf/config.yml`. Set the path of `claude-nm` in it. Then start a run with `gn "<objective>"`.
+10. Open herdr and run `fm auto` (or `fm account-a`). Run `fm acct` to see the quota of every account.
 
 ## Diagrams
 

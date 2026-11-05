@@ -155,8 +155,9 @@ snapshot() {
 }
 
 # Write the diff (with new untracked files) to an HTML page and open it in the browser.
-# The page template is WT_TEMPLATE. It loads the diff2html library from a public
-# CDN. The diff itself stays in the local file.
+# The page template is WT_TEMPLATE. It has a VS Code look (light and dark) and loads
+# the diff2html bundle, with its syntax highlighting, from a public CDN. The diff itself
+# stays in the local file.
 web_view() {
   local path=$1 mb=$2 base=$3 branch=$4 tmp diff f
   find "${TMPDIR%/}" -maxdepth 1 -name 'wt.*' -type d -mtime +1 -exec rm -rf {} + 2>/dev/null || true

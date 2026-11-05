@@ -4,13 +4,13 @@
       {
         "matcher": "ReadNotifications|Bash",
         "hooks": [
-          { "type": "command", "command": "/path/to/bosun/hooks/agent-poll-guard" }
+          { "type": "command", "command": "/path/to/bosun/hooks/agent-poll-guard", "timeout": 5 }
         ]
       },
       {
         "matcher": "Agent|Task|Workflow|TaskCreate|SendMessage",
         "hooks": [
-          { "type": "command", "command": "/path/to/bosun/hooks/crew-tool-guard" }
+          { "type": "command", "command": "/path/to/bosun/hooks/crew-tool-guard", "timeout": 5 }
         ]
       }
     ]

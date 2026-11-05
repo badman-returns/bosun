@@ -3,48 +3,327 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>wt review</title>
+<title>Worktree Diff</title>
 <!-- wt fills __META__, __SUB__ and __DIFF__. The diff stays in this local file. -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/css/diff2html.min.css">
 <script src="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/js/diff2html-ui.min.js"></script>
 <style>
-  :root { --ink: #1e1e1e; --muted: #6b7280; --bg: #ffffff; --line: #e5e7eb; }
-  body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  header { position: sticky; top: 0; z-index: 2; background: var(--bg);
-           border-bottom: 1px solid var(--line); padding: 12px 16px; }
-  h1 { margin: 0; font-size: 18px; font-weight: 600; }
-  h1 .vs { color: var(--muted); font-weight: 400; }
-  .sub { color: var(--muted); font-size: 13px; }
-  .bar { margin-top: 8px; }
-  .bar button { font: inherit; padding: 2px 10px; margin-right: 6px; cursor: pointer; }
-  main { padding: 16px; }
+/* VS Code look: Dark Modern and Light Modern workbench colours, Dark+ and Light+ syntax colours,
+   and the diff editor defaults (line and word backgrounds, diagonal fill for missing lines).
+   The line backgrounds are solid: the VS Code alpha colours mixed over the editor background. */
+:root {
+  --bg: #ffffff; --chrome: #f8f8f8; --fg: #3b3b3b; --muted: #767676; --line: #e5e5e5; --accent: #005fb8;
+  --hover: #f2f2f2; --select: #e4e6f1; --btn: #e5e5e5; --btn-fg: #3b3b3b; --btn-hover: #cccccc;
+  --num: #6e7681; --num-active: #171184;
+  --ins-line: #ebf1dd; --ins-word: rgba(156,204,44,.40);
+  --del-line: #fde2e2; --del-word: rgba(255,0,0,.20);
+  --diag: rgba(34,34,34,.12); --fold-bg: #f3f3f3; --fold-fg: #616161;
+  --st-m: #895503; --st-a: #587c0c; --st-d: #ad0707; --st-r: #007acc;
+  --scroll: rgba(100,100,100,.4);
+  --tk-keyword: #0000ff; --tk-control: #af00db; --tk-string: #a31515; --tk-func: #795e26; --tk-var: #001080;
+  --tk-type: #267f99; --tk-num: #098658; --tk-comment: #008000; --tk-regex: #811f3f; --tk-tag: #800000;
+  --tk-attr: #e50000; --tk-const: #0070c1;
+  --mono: Menlo, Monaco, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1f1f1f; --chrome: #181818; --fg: #cccccc; --muted: #9d9d9d; --line: #2b2b2b; --accent: #0078d4;
+    --hover: #2a2d2e; --select: #37373d; --btn: #313131; --btn-fg: #cccccc; --btn-hover: #3c3c3c;
+    --num: #6e7681; --num-active: #cccccc;
+    --ins-line: #353b29; --ins-word: rgba(156,204,44,.30);
+    --del-line: #47191a; --del-word: rgba(255,0,0,.32);
+    --diag: rgba(204,204,204,.12); --fold-bg: #181818; --fold-fg: #9d9d9d;
+    --st-m: #e2c08d; --st-a: #81b88b; --st-d: #c74e39; --st-r: #73c991;
+    --scroll: rgba(121,121,121,.4);
+    --tk-keyword: #569cd6; --tk-control: #c586c0; --tk-string: #ce9178; --tk-func: #dcdcaa; --tk-var: #9cdcfe;
+    --tk-type: #4ec9b0; --tk-num: #b5cea8; --tk-comment: #6a9955; --tk-regex: #d16969; --tk-tag: #569cd6;
+    --tk-attr: #9cdcfe; --tk-const: #4fc1ff;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1f1f1f; --chrome: #181818; --fg: #cccccc; --muted: #9d9d9d; --line: #2b2b2b; --accent: #0078d4;
+  --hover: #2a2d2e; --select: #37373d; --btn: #313131; --btn-fg: #cccccc; --btn-hover: #3c3c3c;
+  --num: #6e7681; --num-active: #cccccc;
+  --ins-line: #353b29; --ins-word: rgba(156,204,44,.30);
+  --del-line: #47191a; --del-word: rgba(255,0,0,.32);
+  --diag: rgba(204,204,204,.12); --fold-bg: #181818; --fold-fg: #9d9d9d;
+  --st-m: #e2c08d; --st-a: #81b88b; --st-d: #c74e39; --st-r: #73c991;
+  --scroll: rgba(121,121,121,.4);
+  --tk-keyword: #569cd6; --tk-control: #c586c0; --tk-string: #ce9178; --tk-func: #dcdcaa; --tk-var: #9cdcfe;
+  --tk-type: #4ec9b0; --tk-num: #b5cea8; --tk-comment: #6a9955; --tk-regex: #d16969; --tk-tag: #569cd6;
+  --tk-attr: #9cdcfe; --tk-const: #4fc1ff;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); }
+body { font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+::-webkit-scrollbar { width: 14px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--scroll); border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+
+/* Title area, like the editor title bar of the multi-file diff editor. */
+header {
+  position: sticky; top: 0; z-index: 20; height: 48px; padding: 0 12px;
+  background: var(--chrome); border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 14px;
+}
+.title { min-width: 0; flex: 1; }
+h1 { margin: 0; font-size: 13px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+h1 .vs { color: var(--muted); }
+.sub { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stats { font: 12px var(--mono); white-space: nowrap; }
+.stats .a { color: var(--st-a); } .stats .d { color: var(--st-d); }
+.controls { display: flex; gap: 4px; }
+button {
+  font: 12px -apple-system, sans-serif; color: var(--btn-fg); background: var(--btn);
+  border: 1px solid transparent; border-radius: 2px; padding: 4px 10px; cursor: pointer;
+}
+button:hover { background: var(--btn-hover); }
+button:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--accent); color: #ffffff; }
+
+/* Side bar, like the Source Control "Changes" list. */
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); }
+nav {
+  position: sticky; top: 48px; height: calc(100vh - 48px); overflow: auto;
+  background: var(--chrome); border-right: 1px solid var(--line); padding: 4px 0;
+}
+nav h2 { margin: 0; padding: 6px 12px 6px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--fg); }
+nav h2 .badge { margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--btn); font-weight: 400; }
+nav a {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center;
+  height: 22px; padding: 0 12px 0 20px; color: var(--fg); text-decoration: none; border: 1px solid transparent;
+}
+nav a:hover { background: var(--hover); }
+nav a.active { background: var(--select); }
+nav a:focus-visible { outline: none; border-color: var(--accent); }
+nav a.viewed .file { opacity: .55; }
+nav .file { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+nav .dir { color: var(--muted); font-size: 12px; margin-left: 6px; }
+nav .st { font-size: 12px; width: 12px; text-align: center; }
+.st-M { color: var(--st-m); } .st-A { color: var(--st-a); } .st-D { color: var(--st-d); } .st-R { color: var(--st-r); }
+nav .file b { font-weight: 400; }
+nav a.st-D-row .file b { text-decoration: line-through; }
+main { padding: 0; min-width: 0; }
+.empty { color: var(--muted); padding: 32px 16px; }
+
+@media (max-width: 900px) {
+  header { height: auto; min-height: 48px; flex-wrap: wrap; padding: 8px 12px; }
+  .layout { grid-template-columns: 1fr; }
+  nav { position: static; height: auto; max-height: 40vh; border-right: 0; border-bottom: 1px solid var(--line); }
+}
+
+/* diff2html overrides to match the VS Code diff editor. */
+.d2h-wrapper .d2h-file-wrapper { border: 0; border-bottom: 1px solid var(--line); border-radius: 0; margin: 0; overflow: clip; background: var(--bg); scroll-margin-top: 48px; }
+.d2h-wrapper .d2h-file-header {
+  background: var(--chrome); border-bottom: 1px solid var(--line); padding: 0 12px; height: 32px;
+  top: 48px; z-index: 5; font-family: inherit; align-items: center;
+}
+.d2h-wrapper .d2h-file-name-wrapper { font-size: 13px; align-items: center; }
+.d2h-wrapper .d2h-file-name { color: var(--fg); font: 13px -apple-system, BlinkMacSystemFont, sans-serif; }
+.d2h-wrapper .d2h-file-name .dir { color: var(--muted); font-size: 12px; margin-left: 8px; }
+.d2h-wrapper .d2h-icon { display: none; }
+.d2h-wrapper .d2h-tag { order: -1; border: 0; background: transparent; font-size: 0; margin: 0 8px 0 0; padding: 0; }
+.d2h-wrapper .d2h-tag::after { font-size: 12px; font-weight: 600; }
+.d2h-wrapper .d2h-changed-tag::after { content: "M"; color: var(--st-m); }
+.d2h-wrapper .d2h-added-tag::after { content: "A"; color: var(--st-a); }
+.d2h-wrapper .d2h-deleted-tag::after { content: "D"; color: var(--st-d); }
+.d2h-wrapper .d2h-moved-tag::after { content: "R"; color: var(--st-r); }
+.d2h-wrapper .d2h-file-collapse { color: var(--muted); border: 0; font-size: 12px; }
+.d2h-wrapper .d2h-diff-table { font: 12px/18px var(--mono); }
+.d2h-wrapper .d2h-diff-tbody tr { line-height: 18px; }
+.d2h-wrapper .d2h-files-diff { border-top: 0; }
+.d2h-wrapper .d2h-file-side-diff + .d2h-file-side-diff { border-left: 1px solid var(--line); }
+.d2h-wrapper .d2h-code-linenumber, .d2h-wrapper .d2h-code-side-linenumber {
+  background: var(--bg); color: var(--num); border: 0; font: 12px/18px var(--mono);
+}
+.d2h-wrapper .d2h-code-side-line, .d2h-wrapper .d2h-code-line { background: var(--bg); color: var(--fg); }
+.d2h-wrapper td.d2h-ins, .d2h-wrapper .d2h-ins .d2h-code-side-line, .d2h-wrapper .d2h-ins .d2h-code-line,
+.d2h-wrapper .d2h-file-diff .d2h-ins.d2h-change { background: var(--ins-line); }
+.d2h-wrapper td.d2h-del, .d2h-wrapper .d2h-del .d2h-code-side-line, .d2h-wrapper .d2h-del .d2h-code-line,
+.d2h-wrapper .d2h-file-diff .d2h-del.d2h-change { background: var(--del-line); }
+.d2h-wrapper .d2h-code-side-linenumber.d2h-ins, .d2h-wrapper .d2h-code-linenumber.d2h-ins { background: var(--ins-line); color: var(--num-active); }
+.d2h-wrapper .d2h-code-side-linenumber.d2h-del, .d2h-wrapper .d2h-code-linenumber.d2h-del { background: var(--del-line); color: var(--num-active); }
+.d2h-wrapper .d2h-code-line ins, .d2h-wrapper .d2h-code-side-line ins { background: var(--ins-word); border-radius: 0; }
+.d2h-wrapper .d2h-code-line del, .d2h-wrapper .d2h-code-side-line del { background: var(--del-word); border-radius: 0; }
+.d2h-wrapper .d2h-ins .d2h-code-line-prefix { color: var(--st-a); }
+.d2h-wrapper .d2h-del .d2h-code-line-prefix { color: var(--st-d); }
+.d2h-wrapper .d2h-code-line-prefix { color: var(--num); }
+/* Hunk headers look like the folded "unchanged lines" bars of the diff editor. */
+.d2h-wrapper .d2h-info { background: var(--fold-bg); color: var(--fold-fg); border: 0; font-style: italic; }
+.d2h-wrapper tr:has(> .d2h-info) { background: var(--fold-bg); }
+.d2h-wrapper tr:has(> .d2h-info) td, .d2h-wrapper tr:has(> .d2h-info) td > * { background: var(--fold-bg); color: var(--fold-fg); }
+.d2h-wrapper .d2h-code-side-emptyplaceholder, .d2h-wrapper .d2h-emptyplaceholder {
+  background: repeating-linear-gradient(-45deg, var(--diag) 0 1px, transparent 1px 6px); border: 0;
+}
+.d2h-wrapper .d2h-file-side-diff { overflow-x: auto; }
+
+/* Syntax colours (Dark+ and Light+) for highlight.js token classes. */
+.d2h-wrapper .hljs { background: transparent; color: var(--fg); }
+.hljs-keyword, .hljs-literal, .hljs-selector-tag, .hljs-meta .hljs-keyword { color: var(--tk-keyword); }
+.hljs-built_in, .hljs-type, .hljs-title.class_, .hljs-title.class_.inherited__ { color: var(--tk-type); }
+.hljs-string, .hljs-meta .hljs-string, .hljs-template-tag, .hljs-char.escape_ { color: var(--tk-string); }
+.hljs-title.function_, .hljs-title { color: var(--tk-func); }
+.hljs-variable, .hljs-params, .hljs-property, .hljs-attr, .hljs-template-variable { color: var(--tk-var); }
+.hljs-number, .hljs-bullet { color: var(--tk-num); }
+.hljs-comment, .hljs-quote { color: var(--tk-comment); }
+.hljs-regexp, .hljs-symbol { color: var(--tk-regex); }
+.hljs-tag, .hljs-name, .hljs-selector-id, .hljs-selector-class { color: var(--tk-tag); }
+.hljs-attribute, .hljs-selector-attr, .hljs-selector-pseudo { color: var(--tk-attr); }
+.hljs-variable.constant_, .hljs-variable.language_ { color: var(--tk-const); }
+.hljs-meta, .hljs-subst, .hljs-punctuation, .hljs-operator { color: inherit; }
+.hljs-section { color: var(--tk-keyword); font-weight: 700; }
+.hljs-addition { color: var(--st-a); } .hljs-deletion { color: var(--st-d); }
+
+/* Wrap mode: long lines break instead of scroll. Script equalizes left and right row heights. */
+body.wrap .d2h-code-line, body.wrap .d2h-code-side-line { white-space: normal; display: block; width: auto; }
+body.wrap .d2h-code-line-ctn { display: inline; width: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+body.wrap .d2h-code-line-ctn ins, body.wrap .d2h-code-line-ctn del { display: inline; }
+body.wrap .d2h-file-side-diff { overflow-x: hidden; }
 </style>
 </head>
 <body>
 <header>
-  <h1>__META__</h1>
-  <div class="sub">__SUB__</div>
-  <div class="bar">
-    <button data-view="side-by-side">Side by side</button>
-    <button data-view="line-by-line">Line by line</button>
+  <div class="title">
+    <h1>__META__</h1>
+    <div class="sub">__SUB__</div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="controls">
+    <button id="mode" type="button">One column</button>
+    <button id="wrap" type="button" aria-pressed="true">Wrap lines</button>
+    <button id="theme" type="button">Theme: auto</button>
   </div>
 </header>
-<main id="diff"></main>
+<div class="layout">
+  <nav><h2 id="nav-title">Files</h2><div id="files"></div></nav>
+  <main id="diff"></main>
+</div>
 <script>
-  const diff = __DIFF__;
-  function show(view) {
-    const target = document.getElementById("diff");
-    if (!diff.trim()) { target.textContent = "No changes."; return; }
-    const ui = new Diff2HtmlUI(target, diff, {
-      outputFormat: view, drawFileList: true, matching: "lines",
-      fileListToggle: true, fileContentToggle: true, highlight: false,
+const diff = __DIFF__;
+const state = { mode: "side-by-side", wrap: true, theme: "auto" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("wt-view") || "{}")); } catch (e) {}
+function save() { try { localStorage.setItem("wt-view", JSON.stringify(state)); } catch (e) {} }
+
+function isDark() {
+  return state.theme === "dark" || (state.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
+}
+function applyTheme() {
+  if (state.theme === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", state.theme);
+  document.getElementById("theme").textContent = "Theme: " + state.theme;
+}
+
+// In side-by-side mode the two sides are separate tables. Give each row pair the same height.
+function equalizeRows() {
+  document.querySelectorAll(".d2h-files-diff").forEach((pair) => {
+    const sides = pair.querySelectorAll(".d2h-file-side-diff");
+    if (sides.length !== 2) return;
+    const left = sides[0].querySelectorAll("tr"), right = sides[1].querySelectorAll("tr");
+    const setHeight = (row, h) => { row.style.height = h; row.querySelectorAll("td").forEach((td) => { td.style.height = h; }); };
+    left.forEach((row, i) => { setHeight(row, ""); if (right[i]) setHeight(right[i], ""); });
+    if (!state.wrap) return;
+    left.forEach((row, i) => {
+      if (!right[i]) return;
+      const h = Math.max(row.getBoundingClientRect().height, right[i].getBoundingClientRect().height);
+      setHeight(row, h + "px"); setHeight(right[i], h + "px");
     });
-    ui.draw();
-  }
-  document.querySelectorAll("[data-view]").forEach(b =>
-    b.addEventListener("click", () => show(b.dataset.view)));
-  show("side-by-side");
+  });
+}
+
+// Read the file names and +/- counts from the raw diff, in the same order diff2html draws them.
+function parseFiles(text) {
+  return text.split(/^(?=diff --git )/m).filter((c) => c.startsWith("diff --git ")).map((chunk) => {
+    const f = { addedLines: 0, deletedLines: 0, isNew: /^new file mode/m.test(chunk), isDeleted: /^deleted file mode/m.test(chunk) };
+    const minus = chunk.match(/^--- (?:a\/)?(.*)$/m), plus = chunk.match(/^\+\+\+ (?:b\/)?(.*)$/m);
+    const head = chunk.match(/^diff --git a\/(.*) b\/(.*)$/m);
+    f.oldName = minus && minus[1] !== "/dev/null" ? minus[1] : head ? head[1] : "";
+    f.newName = plus && plus[1] !== "/dev/null" ? plus[1] : head ? head[2] : f.oldName;
+    let inHunk = false;
+    chunk.split("\n").forEach((line) => {
+      if (line.startsWith("@@")) { inHunk = true; return; }
+      if (!inHunk) return;
+      if (line.startsWith("+")) f.addedLines++;
+      else if (line.startsWith("-")) f.deletedLines++;
+    });
+    return f;
+  });
+}
+
+function buildNav(files) {
+  const box = document.getElementById("files");
+  box.innerHTML = "";
+  let added = 0, deleted = 0;
+  const wrappers = document.querySelectorAll(".d2h-file-wrapper");
+  files.forEach((f, i) => {
+    added += f.addedLines; deleted += f.deletedLines;
+    const name = f.isDeleted ? f.oldName : f.newName;
+    const cut = name.lastIndexOf("/");
+    const dir = cut >= 0 ? name.slice(0, cut) : "", base = name.slice(cut + 1);
+    const st = f.isNew ? "A" : f.isDeleted ? "D" : f.oldName !== f.newName ? "R" : "M";
+    const a = document.createElement("a");
+    a.href = "#" + (wrappers[i] ? wrappers[i].id : "");
+    a.className = "st-" + st + "-row";
+    a.innerHTML = '<span class="file"><b></b><span class="dir"></span></span><span class="st st-' + st + '">' + st + "</span>";
+    a.querySelector("b").textContent = base;
+    a.querySelector(".dir").textContent = dir;
+    a.title = name + "  (+" + f.addedLines + " −" + f.deletedLines + ")";
+    // Show the file header as "name  folder", like the VS Code diff editor tab.
+    const label = wrappers[i] && wrappers[i].querySelector(".d2h-file-name");
+    if (label) {
+      label.textContent = base;
+      const d = document.createElement("span");
+      d.className = "dir"; d.textContent = dir;
+      label.appendChild(d);
+      label.title = name;
+    }
+    box.appendChild(a);
+    const viewed = wrappers[i] && wrappers[i].querySelector(".d2h-file-collapse-input");
+    if (viewed) viewed.addEventListener("change", () => a.classList.toggle("viewed", viewed.checked));
+  });
+  document.getElementById("nav-title").innerHTML = 'Changes<span class="badge">' + files.length + "</span>";
+  document.getElementById("stats").innerHTML = '<span class="a">+' + added + '</span> <span class="d">−' + deleted + "</span>";
+
+  const links = [...box.querySelectorAll("a")];
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const i = [...wrappers].indexOf(e.target);
+      links.forEach((l, j) => l.classList.toggle("active", j === i));
+    });
+  }, { rootMargin: "-60px 0px -70% 0px" });
+  wrappers.forEach((w) => spy.observe(w));
+}
+
+function draw() {
+  const el = document.getElementById("diff");
+  if (!diff.trim()) { el.innerHTML = '<p class="empty">No changes against the base branch.</p>'; return; }
+  const ui = new Diff2HtmlUI(el, diff, {
+    drawFileList: false, fileContentToggle: true, matching: "words", outputFormat: state.mode,
+    highlight: true, stickyFileHeaders: true, synchronisedScroll: true, smartSelection: true,
+    colorScheme: isDark() ? "dark" : "light", diffMaxChanges: 5000,
+  });
+  ui.draw();
+  ui.highlightCode();
+  document.body.classList.toggle("wrap", state.wrap);
+  buildNav(parseFiles(diff));
+  requestAnimationFrame(equalizeRows);
+  document.getElementById("mode").textContent = state.mode === "side-by-side" ? "One column" : "Side by side";
+  document.getElementById("wrap").setAttribute("aria-pressed", String(state.wrap));
+}
+
+document.getElementById("mode").onclick = () => { state.mode = state.mode === "side-by-side" ? "line-by-line" : "side-by-side"; save(); draw(); };
+document.getElementById("wrap").onclick = () => { state.wrap = !state.wrap; save(); draw(); };
+document.getElementById("theme").onclick = () => {
+  state.theme = { auto: "dark", dark: "light", light: "auto" }[state.theme] || "auto";
+  save(); applyTheme(); draw();
+};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { applyTheme(); draw(); });
+let resizeTimer;
+addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(equalizeRows, 150); });
+
+applyTheme();
+draw();
 </script>
 </body>
 </html>

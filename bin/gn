@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# gn "<objective>" [gnhf flags]  - start a gnhf ("good night, have fun") run with guardrails.
+#
+# gnhf loops a coding agent overnight: one small committed change per iteration toward the objective.
+# Its own defaults have no iteration or token cap, so this wrapper adds them unless you pass your own:
+#   --max-iterations 15        GN_MAX_ITERATIONS
+#   --max-tokens 30000000      GN_MAX_TOKENS  (input + output + cache, all iterations together)
+#   --max-rate-limit-wait 6h   GN_MAX_WAIT    (stop instead of waiting all morning for a window)
+#   --worktree                 unless you pass --current-branch (your checkout stays untouched)
+# It also turns gnhf's anonymous telemetry off, runs Claude through the account pool
+# (BOSUN_ACCOUNTS, through claude-nm; see gnhf/config.example.yml), and refuses to start when every
+# account has used 85% or more of its week (GN_FORCE=1 overrides).
+#
+# Give it a checkable objective and a stop condition, for example:
+#   gn "make every test in packages/api pass without changing behaviour" --stop-when "all api tests pass"
+set -euo pipefail
+
+has() {
+  local want=$1 a
+  for a in "${args[@]+"${args[@]}"}"; do
+    case "$a" in "$want" | "$want"=*) return 0 ;; esac
+  done
+  return 1
+}
+
+args=("$@")
+if [ ${#args[@]} -eq 0 ] || has -h || has --help; then sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0; fi
+if has --version; then exec gnhf --version; fi
+
+# weekly budget check: the lowest 7-day use among accounts with a fresh reading
+read -r -a ACCOUNTS <<<"${BOSUN_ACCOUNTS:-$HOME/.claude-account-a $HOME/.claude-account-b}"
+week=$(for d in "${ACCOUNTS[@]}"; do
+  f="$d/.quota-cache.json"; [ -f "$f" ] || continue
+  jq -r --argjson now "$(date +%s)" 'select(($now - (.at // 0)) < 2700) | .rate_limits.seven_day.used_percentage // empty | floor' "$f" 2>/dev/null
+done | sort -n | head -1)
+if [ -n "$week" ] && [ "$week" -ge 85 ] && [ "${GN_FORCE:-0}" != 1 ]; then
+  echo "gn: every account has used ${week}% or more of its week; a night run could use up the rest. GN_FORCE=1 gn ... to run anyway." >&2
+  exit 1
+fi
+
+extra=()
+has --max-iterations || extra+=(--max-iterations "${GN_MAX_ITERATIONS:-15}")
+has --max-tokens || extra+=(--max-tokens "${GN_MAX_TOKENS:-30000000}")
+has --max-rate-limit-wait || extra+=(--max-rate-limit-wait "${GN_MAX_WAIT:-6h}")
+if ! has --current-branch && ! has --worktree; then extra+=(--worktree); fi
+
+echo "gn: accounts now: $(claude-acct status 2>/dev/null | awk 'NR>1 {printf "%s 5h %s week %s;  ", $1, $2, $3}')"
+echo "gn: caps: ${extra[*]}"
+export GNHF_TELEMETRY=0 CLAUDE_POOL_TAG=gnhf
+exec gnhf "${extra[@]}" "$@"

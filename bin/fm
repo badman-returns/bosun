@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# fm <account|auto> [session] [--sonnet]  - start a first mate on that Claude account (run it inside herdr).
+# fm <account|auto> [session] [--sonnet] [--subagents]  - start a first mate on that Claude account (run it inside herdr).
 #
 #   fm auto web         the account with the most room right now (claude-acct pick decides)
 #   fm acct             every account's 5-hour and 7-day use (claude-acct status)
@@ -25,6 +25,13 @@
 # --sonnet starts the first mate on Sonnet. --opus is the default.
 # The window is always the normal one, never 1M.
 #
+# --subagents lets this one first mate start harness sub-agents (the Agent tool). It sets
+# FM_ALLOW_SUBAGENT=1 for this session only; firstmate's sub-agent guard honours that variable.
+# Use it when the work is not on a registered project (no git repo, a browser task), because
+# fm-spawn cannot make a crew worktree there. Do not put FM_ALLOW_SUBAGENT into
+# .claude/settings.local.json: every first mate on every account shares that file, so it would
+# turn the sub-agent guard off for the whole fleet.
+#
 # Context: set CLAUDE_CODE_DISABLE_1M_CONTEXT=1 in every account's settings.json, so no session
 # gets the 1M window. This launcher also sets a 160k compact window, so the first mate's context
 # stays smaller and cheaper. Crew get the same 200k cap from settings.
@@ -43,12 +50,14 @@
 set -euo pipefail
 
 FM_MODEL=${FM_MODEL:-opus}
+FM_SUBAGENTS=${FM_SUBAGENTS:-0}
 args=()
 for a in "$@"; do
   case "$a" in
     --opus) FM_MODEL=opus ;;
     --sonnet) FM_MODEL=sonnet ;;
     --model=*) FM_MODEL=${a#--model=} ;;
+    --subagents) FM_SUBAGENTS=1 ;;
     *) args+=("$a") ;;
   esac
 done
@@ -95,7 +104,7 @@ for d in "${ACCOUNTS[@]}"; do
 done
 if [ -z "$acct" ] || [ -z "$acct_dir" ]; then
   names=$(for d in "${ACCOUNTS[@]}"; do basename "$d" | sed 's/^\.claude-//'; done | paste -sd'|' -)
-  echo "usage: fm ${names}|auto [session-name] [--sonnet]   |   fm ls [project]   |   fm acct"; exit 1
+  echo "usage: fm ${names}|auto [session-name] [--sonnet] [--subagents]   |   fm ls [project]   |   fm acct"; exit 1
 fi
 case "$name" in
   main) home="$CODE" ;;
@@ -174,5 +183,9 @@ export CLAUDE_CODE_DISABLE_1M_CONTEXT=1 CLAUDE_CODE_AUTO_COMPACT_WINDOW=160000
 # as a gray line in this chat that the model never reads, and /calm hides tool rows. Firstmate never
 # sets this flag itself; it is the captain's opt-in. Set here only, so only first mates get it.
 echo "fm: first mate '$name' on the $acct account, model $FM_MODEL (160k compact window, compacts near 127k)"
+if [ "$FM_SUBAGENTS" = 1 ]; then
+  echo "fm: sub-agents allowed for this session only (FM_ALLOW_SUBAGENT=1)"
+  export FM_ALLOW_SUBAGENT=1
+fi
 FM_HOME="$home" CLAUDE_CONFIG_DIR="$acct_dir" CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1 \
   exec claude --model "$FM_MODEL" --effort high
