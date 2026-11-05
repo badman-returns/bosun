@@ -37,6 +37,7 @@ Install firstmate from its own repo. firstmate keeps its own licence. The licenc
 | `firstmate/crew-dispatch.example.json` | Dispatch rules. They give each task a model and an effort level. |
 | `firstmate/brief-include.example.md` | Standing rules that go into the brief of every worker. |
 | `agent-instructions.example.md` | An example of global agent preferences, for `~/.agents/AGENTS.md`. |
+| `docs/setup.md` | The setup blueprint: the system diagram, the decisions, a prompt for your Claude, the install steps and the checks. |
 | `docs/workflow.md` | How I use the fleet: when to use it, a day of work, where knowledge lives, proof, and lessons. |
 | `docs/diagrams/` | The diagrams. Each `.py` file makes one `.svg` and one `.excalidraw` file. |
 
@@ -82,80 +83,16 @@ it.
 
 ## Install
 
-These steps are for macOS. Most scripts also work on Linux, but `wt` uses `open`, `opendiff` and
-`lsof`.
-
-1. Install the requirements: `bash`, `git`, `jq`, `python3` and Claude Code. Then install firstmate
-   and its tools (herdr, treehouse and no-mistakes) as the firstmate README tells you.
-2. Make one Claude config dir for each account, for example `~/.claude-account-a` and
-   `~/.claude-account-b`. Log in once in each one with
-   `CLAUDE_CONFIG_DIR=~/.claude-account-a claude`.
-3. Clone bosun, for example to `~/code/bosun`. Link the scripts into a folder on your `PATH`:
-
-   ```sh
-   mkdir -p ~/.local/bin ~/.local/share/wt
-   ln -s ~/code/bosun/bin/* ~/code/bosun/hooks/agent-poll-guard ~/code/bosun/hooks/crew-tool-guard ~/.local/bin/
-   cp ~/code/bosun/share/wt/review.html ~/.local/share/wt/review.html
-   ```
-
-4. Set the env vars in your shell profile. Only `BOSUN_ACCOUNTS` is necessary when your folders
-   are the same as the defaults.
-
-   | Variable | What it sets | Default |
-   |---|---|---|
-   | `BOSUN_ACCOUNTS` | The account pool: Claude config dirs, separated by spaces. | `$HOME/.claude-account-a $HOME/.claude-account-b` |
-   | `BOSUN_FM_HOME` | The firstmate checkout (the main home). | `$HOME/Documents/firstmate` |
-   | `BOSUN_FM_SESSIONS` | The folder for the homes of named sessions. | `$HOME/Documents/firstmate-sessions` |
-   | `BOSUN_CREW_ROOTS` | Folders where crew worktrees are, separated by colons. | `$HOME/.treehouse` |
-   | `BOSUN_WORK_REMOTE_PATTERNS` | Globs on the `origin` URL of work repos, separated by spaces, for example `"*your-org/*"`. | empty (check off) |
-   | `BOSUN_WORK_EMAIL_DOMAIN` | The email domain that work repos must use, for example `"@example.com"`. | empty (check off) |
-   | `WT_ROOTS` | Folders that hold the clones for `wt`, separated by colons. Globs are permitted. | the `projects` folders of the firstmate homes |
-   | `WT_TEMPLATE` | The page template for `wt`. | `~/.local/share/wt/review.html` |
-   | `CLAUDE_NM_REAL` | The real `claude` binary for `claude-nm`. | `~/.local/bin/claude` |
-   | `CLAUDE_ACCT_STALE_SECS` | The age in seconds after which a quota reading counts as unknown. | `2700` |
-   | `FM_MODEL` | The model of the first mate. `--sonnet` on `fm` also sets it. | `opus` |
-   | `FM_SUBAGENTS` | `1` lets the first mate start sub-agents. `--subagents` on `fm` also sets it. | `0` |
-   | `BP_ROOTS` | Folders that hold the clones for `bp <name>`, separated by colons. | the `projects` folder of `BOSUN_FM_HOME` |
-   | `BP_ACCOUNT_RULES` | Rules `<path prefix>=<config dir>` for `bp`, separated by spaces. The first match wins. | empty (the first account) |
-   | `GN_MAX_ITERATIONS`, `GN_MAX_TOKENS`, `GN_MAX_WAIT` | The caps that `gn` adds to a gnhf run. | `15`, `30000000`, `6h` |
-
-   The status line shows "wrong git email" only when you set both `BOSUN_WORK_*` variables.
-
-5. In the `settings.json` of each account, add the status line, the hooks and the context limit.
-   Use the absolute path of your clone. Merge `hooks/settings.example.json` for the hooks.
-
-   ```json
-   {
-     "statusLine": { "type": "command", "command": "/path/to/bosun/statusline/statusline-command.sh" },
-     "env": { "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1" }
-   }
-   ```
-
-6. Copy the firstmate examples into the config folder of your firstmate checkout. Then change them
-   as you need.
-
-   ```sh
-   cp ~/code/bosun/firstmate/crew-dispatch.example.json "$BOSUN_FM_HOME/config/crew-dispatch.json"
-   cp ~/code/bosun/firstmate/brief-include.example.md "$BOSUN_FM_HOME/config/brief-include.md"
-   ```
-
-7. Copy `agent-instructions.example.md` to `~/.agents/AGENTS.md` and change it to your preferences.
-   Link it into each account as `CLAUDE.md`, so that every account reads the same file:
-
-   ```sh
-   ln -s ~/.agents/AGENTS.md ~/.claude-account-a/CLAUDE.md
-   ```
-
-8. In the no-mistakes config, set `agent_path_override.claude` to the path of `claude-nm`. The gate
-   then spreads its sessions over the accounts.
-9. Optional: for overnight loops, install gnhf and copy `gnhf/config.example.yml` to
-   `~/.gnhf/config.yml`. Set the path of `claude-nm` in it. Then start a run with `gn "<objective>"`.
-10. Open herdr and run `fm auto` (or `fm account-a`). Run `fm acct` to see the quota of every account.
+[docs/setup.md](docs/setup.md) is the blueprint of the whole setup. It has the system diagram, the
+decisions to make, a prompt that you give to your own Claude, the install steps, the env vars and
+the checks.
 
 ## Diagrams
 
 The sources are in `docs/diagrams/`. To change a diagram, edit its `.py` file and run
 `python3 <file>.py` in that folder. You can open each `.excalidraw` file at <https://excalidraw.com>.
+
+![The whole system](docs/diagrams/0-the-whole-system.svg)
 
 ![A day of work](docs/diagrams/1-a-day-of-work.svg)
 
