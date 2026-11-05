@@ -28,6 +28,7 @@ Install firstmate from its own repo. firstmate keeps its own licence. The licenc
 | `bin/wt` | Lists the worktrees of a project and shows the changes of one worktree as a pull-request page. It only reads. |
 | `share/wt/review.html` | The page template that `wt` uses. It has a VS Code look, in light and dark. |
 | `bin/gn` | Starts a gnhf overnight loop with caps on iterations, tokens and the wait for a rate limit. It does not start when every account is near its weekly limit. |
+| `bin/bp` | Runs backpass in a repo on the account that owns that repo, so each account learns only from its own sessions. |
 | `gnhf/config.example.yml` | The gnhf config. It sends each loop step through `claude-nm` on Sonnet. |
 | `hooks/agent-poll-guard` | A PreToolUse hook. It stops an agent that polls a status command in a loop. |
 | `hooks/crew-tool-guard` | A PreToolUse hook. It stops a worker that tries to start sub-agents or workflows. |
@@ -114,6 +115,8 @@ These steps are for macOS. Most scripts also work on Linux, but `wt` uses `open`
    | `CLAUDE_ACCT_STALE_SECS` | The age in seconds after which a quota reading counts as unknown. | `2700` |
    | `FM_MODEL` | The model of the first mate. `--sonnet` on `fm` also sets it. | `opus` |
    | `FM_SUBAGENTS` | `1` lets the first mate start sub-agents. `--subagents` on `fm` also sets it. | `0` |
+   | `BP_ROOTS` | Folders that hold the clones for `bp <name>`, separated by colons. | the `projects` folder of `BOSUN_FM_HOME` |
+   | `BP_ACCOUNT_RULES` | Rules `<path prefix>=<config dir>` for `bp`, separated by spaces. The first match wins. | empty (the first account) |
    | `GN_MAX_ITERATIONS`, `GN_MAX_TOKENS`, `GN_MAX_WAIT` | The caps that `gn` adds to a gnhf run. | `15`, `30000000`, `6h` |
 
    The status line shows "wrong git email" only when you set both `BOSUN_WORK_*` variables.

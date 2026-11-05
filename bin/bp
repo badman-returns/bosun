@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# bp [repo] [backpass args...]  - run backpass in a repo on the Claude account that owns it.
+#
+#   bp web-app                 full pass: read new sessions, write a proposal (never edits the repo)
+#   bp web-app apply           review the proposal on a Lavish page; only accepted edits are written
+#   bp web-app status          size budget, cache, last proposal
+#   bp                         the repo you are standing in
+#
+# backpass reads only the sessions of the account in CLAUDE_CONFIG_DIR and bills its model calls to
+# it. bp picks the account from the repo path, so the transcripts of one employer or client stay on
+# the account that does that work. Consequence: a repo learns only from the sessions of its own
+# account (work done on another account is not read).
+#
+# BP_ROOTS          folders that hold your clones, separated by colons, so `bp <name>` finds a repo.
+#                   Default: the projects folder of the main firstmate home (BOSUN_FM_HOME).
+# BP_ACCOUNT_RULES  rules "<path prefix>=<Claude config dir>", separated by spaces. The first rule
+#                   whose prefix matches the repo path wins, for example
+#                   "$HOME/work=$HOME/.claude-account-a".
+#                   A repo that matches no rule uses the first account in BOSUN_ACCOUNTS.
+#
+# Cadence: every two weeks per repo. backpass caches evidence per session in .backpass/, so a run
+# only pays for sessions it has not read. A rule changes only when two sessions agree, so a repo
+# with fewer than about 5 sessions in the window produces nothing; widen with --since 90d or wait.
+# Models and clone roots for backpass itself are in ~/.config/backpass/config.json.
+set -euo pipefail
+
+read -r -a ACCOUNTS <<<"${BOSUN_ACCOUNTS:-$HOME/.claude-account-a $HOME/.claude-account-b}"
+IFS=: read -r -a roots <<<"${BP_ROOTS:-${BOSUN_FM_HOME:-$HOME/Documents/firstmate}/projects}"
+read -r -a rules <<<"${BP_ACCOUNT_RULES:-}"
+
+repo=""
+if [ $# -gt 0 ]; then
+  if [ -d "$1/.git" ] || [ -f "$1/.git" ]; then repo=$(cd "$1" && pwd); shift
+  else
+    for r in "${roots[@]}"; do
+      if [ -e "$r/$1/.git" ]; then repo="$r/$1"; shift; break; fi
+    done
+  fi
+fi
+if [ -z "$repo" ]; then
+  repo=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "bp: not in a repo, and '${1:-}' is not a known repo name" >&2; exit 1; }
+fi
+
+acct_dir=${ACCOUNTS[0]}
+for rule in "${rules[@]+"${rules[@]}"}"; do
+  prefix=${rule%%=*}; dir=${rule#*=}
+  case "$repo/" in "${prefix%/}/"*) acct_dir=$dir; break ;; esac
+done
+
+# backpass state stays out of git without touching a tracked .gitignore.
+exclude=$(git -C "$repo" rev-parse --git-path info/exclude)
+case "$exclude" in /*) ;; *) exclude="$repo/$exclude" ;; esac
+grep -qxF '.backpass/' "$exclude" 2>/dev/null || echo '.backpass/' >> "$exclude"
+
+echo "bp: $(basename "$repo") on the $(basename "$acct_dir" | sed 's/^\.claude-//') account" >&2
+cd "$repo"
+CLAUDE_CONFIG_DIR="$acct_dir" exec backpass "$@"
