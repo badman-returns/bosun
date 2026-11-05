@@ -1,0 +1,18 @@
+# gnhf config: copy to ~/.gnhf/config.yml. Start runs with `gn`, which adds the iteration, token
+# and wait caps.
+agent: claude
+
+# Claude goes through the same wrapper as no-mistakes: every iteration starts on the account that
+# has the most room (claude-acct), so a night run spreads across the pool.
+agentPathOverride:
+  claude: /path/to/bosun/bin/claude-nm
+
+# Sonnet on the normal context window, not the account default.
+agentModel:
+  claude: sonnet
+
+# Stop after this many failures in a row.
+maxConsecutiveFailures: 3
+
+# Keep the machine awake during a run.
+preventSleep: true
