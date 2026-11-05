@@ -1,0 +1,258 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1690" height="1707" viewBox="20 0 1690 1707" font-family="Inter, Segoe UI, system-ui, -apple-system, sans-serif">
+<rect x="20" y="0" width="1690" height="1707" fill="#ffffff"/>
+<defs>
+<marker id="a1971c2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#1971c2"/></marker>
+<marker id="a2f9e44" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#2f9e44"/></marker>
+<marker id="a495057" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#495057"/></marker>
+<marker id="a6741d9" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="#6741d9"/></marker>
+</defs>
+<rect x="60" y="150" width="280" height="180" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="440" y="150" width="330" height="180" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="870" y="150" width="360" height="180" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="1330" y="150" width="340" height="180" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="1330" y="450" width="340" height="210" rx="10" fill="#f3f0ff" stroke="#6741d9" stroke-width="1.5"/>
+<rect x="870" y="450" width="360" height="210" rx="10" fill="#fff9db" stroke="#f08c00" stroke-width="1.5"/>
+<rect x="440" y="450" width="330" height="210" rx="10" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1.5"/>
+<rect x="60" y="760" width="1610" height="310" rx="10" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<rect x="90" y="820" width="330" height="220" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="520" y="820" width="360" height="105" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="520" y="935" width="360" height="105" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="980" y="820" width="340" height="220" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="1420" y="820" width="220" height="220" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="60" y="1130" width="790" height="180" rx="10" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1.5"/>
+<rect x="880" y="1130" width="790" height="180" rx="10" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<rect x="60" y="1370" width="1610" height="297" rx="10" fill="#ffffff" stroke="#dee2e6" stroke-width="1.5"/>
+<path d="M 344 225 L 436 225" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 774 225 L 866 225" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 1234 225 L 1326 225" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 1500 334 L 1500 446" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 1326 530 L 1234 530" fill="none" stroke="#6741d9" stroke-width="2" stroke-linejoin="round" marker-end="url(#a6741d9)"/>
+<path d="M 866 530 L 774 530" fill="none" stroke="#2f9e44" stroke-width="2" stroke-linejoin="round" marker-end="url(#a2f9e44)"/>
+<path d="M 436 610 L 200 610 L 200 334" fill="none" stroke="#1971c2" stroke-width="2" stroke-linejoin="round" marker-end="url(#a1971c2)"/>
+<path d="M 424 880 L 516 880" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 424 995 L 516 995" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 884 880 L 976 880" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 884 995 L 976 995" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<path d="M 1324 930 L 1416 930" fill="none" stroke="#495057" stroke-width="2" stroke-linejoin="round" marker-end="url(#a495057)"/>
+<text x="60" y="66.6" font-size="28" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="60" dy="0">The whole system</tspan>
+</text>
+<text x="60" y="98.25" font-size="15" font-weight="600" fill="#868e96" xml:space="preserve">
+<tspan x="60" dy="0">One captain, a pool of Claude accounts, one first mate per window, a gate before GitHub.</tspan>
+</text>
+<text x="82" y="185.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">YOU</tspan>
+</text>
+<text x="82" y="212.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="82" dy="0">the captain</tspan>
+</text>
+<text x="82" y="244.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">open one terminal</tspan>
+<tspan x="82" dy="16.25">ask in plain words</tspan>
+<tspan x="82" dy="16.25">read the PR evidence</tspan>
+<tspan x="82" dy="16.25">merge (only you merge)</tspan>
+</text>
+<text x="462" y="185.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="462" dy="0">HERDR</tspan>
+</text>
+<text x="462" y="212.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="462" dy="0">terminal workspace</tspan>
+</text>
+<text x="462" y="244.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="462" dy="0">one window per account</tspan>
+<tspan x="462" dy="16.25">agents keep running when</tspan>
+<tspan x="462" dy="16.25">the window is closed</tspan>
+<tspan x="462" dy="16.25">tabs: server, claude, shell</tspan>
+</text>
+<text x="892" y="185.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="892" dy="0">fm  (bosun)</tspan>
+</text>
+<text x="892" y="212.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="892" dy="0">fm auto &lt;session&gt;</tspan>
+</text>
+<text x="892" y="244.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="892" dy="0">claude-acct picks the account</tspan>
+<tspan x="892" dy="16.25">one home per session name</tspan>
+<tspan x="892" dy="16.25">a project name gives a focused</tspan>
+<tspan x="892" dy="16.25">session with its own task list</tspan>
+</text>
+<text x="1352" y="185.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="1352" dy="0">FIRST MATE</tspan>
+</text>
+<text x="1352" y="212.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1352" dy="0">Opus, 160k compact window</tspan>
+</text>
+<text x="1352" y="244.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1352" dy="0">the one agent you talk to</tspan>
+<tspan x="1352" dy="16.25">splits work into tasks</tspan>
+<tspan x="1352" dy="16.25">starts the crew, watches it</tspan>
+<tspan x="1352" dy="16.25">asks you only real decisions</tspan>
+</text>
+<text x="352" y="211.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="352" dy="0">1  herdr</tspan>
+</text>
+<text x="782" y="211.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="782" dy="0">1  fm auto</tspan>
+</text>
+<text x="1242" y="211.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="1242" dy="0">1  starts</tspan>
+</text>
+<text x="1352" y="485.2" font-size="16" font-weight="600" fill="#6741d9" xml:space="preserve">
+<tspan x="1352" dy="0">CREW</tspan>
+</text>
+<text x="1352" y="512.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1352" dy="0">one herdr tab + worktree each</tspan>
+</text>
+<text x="1352" y="544.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1352" dy="0">crew-dispatch.json gives the</tspan>
+<tspan x="1352" dy="16.25">model and effort (Sonnet</tspan>
+<tspan x="1352" dy="16.25">unless the task needs judgement)</tspan>
+<tspan x="1352" dy="16.25">hooks block polling loops</tspan>
+<tspan x="1352" dy="16.25">and sub-agents</tspan>
+</text>
+<text x="892" y="485.2" font-size="16" font-weight="600" fill="#f08c00" xml:space="preserve">
+<tspan x="892" dy="0">NO-MISTAKES GATE</tspan>
+</text>
+<text x="892" y="512.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="892" dy="0">git push no-mistakes</tspan>
+</text>
+<text x="892" y="544.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="892" dy="0">rebase on the default branch</tspan>
+<tspan x="892" dy="16.25">review in a fresh context</tspan>
+<tspan x="892" dy="16.25">end-to-end test vs the request</tspan>
+<tspan x="892" dy="16.25">evidence on the PR</tspan>
+<tspan x="892" dy="16.25">its sessions run via claude-nm</tspan>
+</text>
+<text x="462" y="485.2" font-size="16" font-weight="600" fill="#2f9e44" xml:space="preserve">
+<tspan x="462" dy="0">PULL REQUEST</tspan>
+</text>
+<text x="462" y="512.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="462" dy="0">on GitHub</tspan>
+</text>
+<text x="462" y="544.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="462" dy="0">what you asked for</tspan>
+<tspan x="462" dy="16.25">what changed, risk level</tspan>
+<tspan x="462" dy="16.25">screenshots or video</tspan>
+<tspan x="462" dy="16.25">no agent merges it</tspan>
+</text>
+<text x="1522" y="393.9" font-size="12" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="1522" dy="0">3  one task each</tspan>
+</text>
+<text x="1242" y="516.1" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="1242" dy="0">3  push</tspan>
+</text>
+<text x="782" y="516.1" font-size="13" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="782" dy="0">4  PR opened</tspan>
+</text>
+<text x="214" y="581.4" font-size="12" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="214" dy="0">2  you read and merge</tspan>
+</text>
+<text x="82" y="795.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">ACCOUNTS: ONE QUOTA POOL  (they exist only for billing)</tspan>
+</text>
+<text x="112" y="855.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="112" dy="0">STATUS LINE</tspan>
+</text>
+<text x="112" y="882.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="112" dy="0">in every session</tspan>
+</text>
+<text x="112" y="914.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="112" dy="0">shows branch, model,</tspan>
+<tspan x="112" dy="16.25">context and quota</tspan>
+<tspan x="112" dy="16.25">writes the live 5-hour and</tspan>
+<tspan x="112" dy="16.25">7-day use of its account</tspan>
+</text>
+<text x="542" y="855.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="542" dy="0">ACCOUNT A</tspan>
+</text>
+<text x="542" y="882.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="542" dy="0">~/.claude-account-a/.quota-cache.json</tspan>
+</text>
+<text x="542" y="970.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="542" dy="0">ACCOUNT B</tspan>
+</text>
+<text x="542" y="997.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="542" dy="0">~/.claude-account-b/.quota-cache.json</tspan>
+</text>
+<text x="1002" y="855.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1002" dy="0">claude-acct</tspan>
+</text>
+<text x="1002" y="882.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="1002" dy="0">pick  /  status</tspan>
+</text>
+<text x="1002" y="914.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1002" dy="0">most room in the 5-hour window</tspan>
+<tspan x="1002" dy="16.25">skips a week at 97% or more</tspan>
+<tspan x="1002" dy="16.25">a reading older than 45 min</tspan>
+<tspan x="1002" dy="16.25">counts as unknown</tspan>
+</text>
+<text x="1442" y="855.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1442" dy="0">USED BY</tspan>
+</text>
+<text x="1442" y="890.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="1442" dy="0">fm auto</tspan>
+<tspan x="1442" dy="16.25">claude-nm (gate)</tspan>
+<tspan x="1442" dy="16.25">gn (overnight)</tspan>
+<tspan x="1442" dy="16.25">fm acct (you)</tspan>
+</text>
+<text x="432" y="866.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="432" dy="0">writes</tspan>
+</text>
+<text x="892" y="866.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="892" dy="0">reads</tspan>
+</text>
+<text x="1332" y="916.1" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="1332" dy="0">best</tspan>
+</text>
+<text x="82" y="1165.2" font-size="16" font-weight="600" fill="#2f9e44" xml:space="preserve">
+<tspan x="82" dy="0">KNOWLEDGE</tspan>
+</text>
+<text x="82" y="1192.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="82" dy="0">never inside an account, so a switch changes only who pays</tspan>
+</text>
+<text x="82" y="1224.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="82" dy="0">~/.agents/AGENTS.md: your preferences, linked into every account</tspan>
+<tspan x="82" dy="16.25">&lt;repo&gt;/AGENTS.md: one project, read by every session there</tspan>
+<tspan x="82" dy="16.25">&lt;repo&gt;/.claude/skills: procedures that only some tasks need</tspan>
+<tspan x="82" dy="16.25">firstmate data/: projects, task list, first-mate rules</tspan>
+</text>
+<text x="902" y="1165.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="902" dy="0">SIDE TOOLS</tspan>
+</text>
+<text x="902" y="1192.35" font-size="13" font-weight="400" fill="#868e96" xml:space="preserve">
+<tspan x="902" dy="0">from bosun</tspan>
+</text>
+<text x="902" y="1224.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="902" dy="0">wt: see the diff of a worker before its PR (read-only)</tspan>
+<tspan x="902" dy="16.25">gn: an overnight gnhf loop with caps, through claude-nm</tspan>
+<tspan x="902" dy="16.25">bp: backpass on the account that owns the repo</tspan>
+<tspan x="902" dy="16.25">fm ls: every session, its projects and task counts</tspan>
+</text>
+<text x="84" y="1407.2" font-size="16" font-weight="600" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">WHAT HAPPENS WHEN</tspan>
+</text>
+<text x="84" y="1448.35" font-size="13" font-weight="400" fill="#495057" xml:space="preserve">
+<tspan x="84" dy="0">1     START</tspan>
+</text>
+<text x="84" y="1472.35" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">Open herdr and run fm auto &lt;session&gt;. The account with the most room pays.</tspan>
+</text>
+<text x="84" y="1508.6" font-size="13" font-weight="400" fill="#1971c2" xml:space="preserve">
+<tspan x="84" dy="0">2     YOU</tspan>
+</text>
+<text x="84" y="1532.6" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">Ask in plain words and agree the plan. At the end, read the risk and the evidence, then merge.</tspan>
+</text>
+<text x="84" y="1568.85" font-size="13" font-weight="400" fill="#6741d9" xml:space="preserve">
+<tspan x="84" dy="0">3     AGENTS</tspan>
+</text>
+<text x="84" y="1592.85" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">The first mate opens one herdr tab per task. Each worker has its own worktree.</tspan>
+</text>
+<text x="84" y="1629.1" font-size="13" font-weight="400" fill="#2f9e44" xml:space="preserve">
+<tspan x="84" dy="0">4     GATE</tspan>
+</text>
+<text x="84" y="1653.1" font-size="13" font-weight="400" fill="#1e1e1e" xml:space="preserve">
+<tspan x="84" dy="0">Every change passes no-mistakes before GitHub. Then the PR opens with the evidence.</tspan>
+</text>
+</svg>
